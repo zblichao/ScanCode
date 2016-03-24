@@ -43,7 +43,7 @@ public class OutOrderDetialActivity extends BaseActivity {
     private String barcodeStr;
     private String lot;
     private String expire;
-    private View windowOut;
+
     private EAN128Parser ean128Parser = new EAN128Parser(); // 你看看放哪儿合适，我一般放在onCreate
     private HIBCParser hibcParser = new HIBCParser();
     private AlertDialog alertDialog;
@@ -54,9 +54,7 @@ public class OutOrderDetialActivity extends BaseActivity {
         setContentView(R.layout.activity_out_order_detial);
         Intent intent = getIntent();
         id = intent.getStringExtra("order_id");
-        LayoutInflater inflater = LayoutInflater.from(this);
-        windowOut = inflater.inflate(
-                R.layout.window_out, null);
+
         list = (ExpandableListView) findViewById(R.id.list);
         adapter = new OutOrderDetialAdapter(this);
         list.setAdapter(adapter);
@@ -66,8 +64,8 @@ public class OutOrderDetialActivity extends BaseActivity {
         scanBroadcastReceiver.initScanManger();
         dao = new OutOrderDetialDAO();
         getOrders();
-
-//        barcodeStr = "SPH00002159";
+        showDialog_Layout( this  );
+        //        barcodeStr = "SPH00002159";
 //        expire = "1707136";
 //        lot = "2018/07/01";
         // getProductInfo();
@@ -121,7 +119,7 @@ public class OutOrderDetialActivity extends BaseActivity {
     };
 
     private TextView setTextById(JSONObject json, int id, String key) {
-        TextView textView = (TextView) windowOut.findViewById(R.id.productName);
+        TextView textView = (TextView) alertDialog.findViewById(R.id.productName);
         try {
             textView.setText(json.getString("product_name"));
         } catch (JSONException e) {
@@ -131,7 +129,7 @@ public class OutOrderDetialActivity extends BaseActivity {
     }
 
     private TextView setTextById(int id, String value) {
-        TextView textView = (TextView) windowOut.findViewById(R.id.productName);
+        TextView textView = (TextView) alertDialog.findViewById(R.id.productName);
         textView.setText(value);
         return textView;
     }
@@ -159,11 +157,11 @@ public class OutOrderDetialActivity extends BaseActivity {
 
     private void outOrders() {
 
-        TextView lotText = (TextView) windowOut.findViewById(R.id.LOT);
+        TextView lotText = (TextView) alertDialog.findViewById(R.id.LOT);
         final String lot = lotText.getText().toString();
-        TextView expireText = (TextView)windowOut. findViewById(R.id.date);
+        TextView expireText = (TextView)alertDialog. findViewById(R.id.date);
         final String expire = expireText.getText().toString();
-        TextView qtyText = (TextView)windowOut. findViewById(R.id.num);
+        TextView qtyText = (TextView)alertDialog. findViewById(R.id.num);
         final String qty = qtyText.getText().toString();
         progressDialog = ProgressDialog.show(OutOrderDetialActivity.this, // context
                 "", // title
@@ -206,13 +204,9 @@ public class OutOrderDetialActivity extends BaseActivity {
 
 
     private void getProductInfo() {
-        if(progressDialog!=null&&progressDialog.isShowing())
+        if(alertDialog!=null&&alertDialog.isShowing())
             return;
-        showDialog_Layout(this);
-        progressDialog = ProgressDialog.show(OutOrderDetialActivity.this, // context
-                "", // title
-                "Loading. Please wait...", // message
-                true);
+        alertDialog.show();
 
         new Thread() {
             @Override
@@ -292,14 +286,14 @@ public class OutOrderDetialActivity extends BaseActivity {
                 case "EAN13":
                     break;
                 case "hospital-P":
-                    OutOrderDetialActivity.this.barcodeStr = barcodeStr.split("*")[0];
-                    OutOrderDetialActivity.this.expire = barcodeStr.split("*")[0];
-                    OutOrderDetialActivity.this.lot = barcodeStr.split("*")[1];
+                    OutOrderDetialActivity.this.barcodeStr = barcodeStr.split("\\*")[0];
+                    OutOrderDetialActivity.this.expire = barcodeStr.split("\\*")[0];
+                    OutOrderDetialActivity.this.lot = barcodeStr.split("\\*")[1];
                     break;
 
                 case "hospital-S":
-                    OutOrderDetialActivity.this.barcodeStr = barcodeStr.split("*")[0];
-                    OutOrderDetialActivity.this.expire = barcodeStr.split("*")[0];
+                    OutOrderDetialActivity.this.barcodeStr = barcodeStr.split("\\*")[0];
+                    OutOrderDetialActivity.this.expire = barcodeStr.split("\\*")[0];
                     break;
             }
             getProductInfo();
@@ -321,17 +315,19 @@ public class OutOrderDetialActivity extends BaseActivity {
 
 
     private void showDialog_Layout(Context context) {
-
-        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View windowOut = inflater.inflate(
+                R.layout.window_out, null);
+          AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(false);
         builder.setView(windowOut);
         builder.setPositiveButton("确认",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         try {
-                            Field field =  dialog.getClass().getSuperclass().getDeclaredField("mShowing");
+                            Field field = dialog.getClass().getSuperclass().getDeclaredField("mShowing");
                             field.setAccessible(true);
-                            field.set(dialog,true);//true表示要关闭
+                            field.set(dialog, true);//true表示要关闭
                         } catch (NoSuchFieldException e) {
                             e.printStackTrace();
                         } catch (IllegalAccessException e) {
@@ -350,8 +346,7 @@ public class OutOrderDetialActivity extends BaseActivity {
                 });
 
         alertDialog = builder.create();
-        alertDialog.show();
-        ;
+
     }
 
 }

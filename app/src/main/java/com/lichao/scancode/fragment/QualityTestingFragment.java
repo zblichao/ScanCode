@@ -204,14 +204,14 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
             case "EAN13":
                 break;
             case "hospital-P":
-                this.barcodeStr = barcodeStr.split("*")[0];
-                setTextEditTextById(R.id.hospital_barcode_primary, barcodeStr.split("*")[0]);
-                setTextEditTextById(R.id.LOT, barcodeStr.split("*")[1]);
+                this.barcodeStr = barcodeStr.split("\\*")[0];
+                setTextEditTextById(R.id.hospital_barcode_primary, barcodeStr.split("\\*")[0]);
+                setTextEditTextById(R.id.LOT, barcodeStr.split("\\*")[1]);
                 break;
 
             case "hospital-S":
-                this.barcodeStr = barcodeStr.split("*")[0];
-                setTextEditTextById(R.id.expire, barcodeStr.split("*")[0]);
+                this.barcodeStr = barcodeStr.split("\\*")[0];
+                setTextEditTextById(R.id.expire, barcodeStr.split("\\*")[0]);
                 searchProductByCode();
                 break;
         }

@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity
         IntentFilter filter = new IntentFilter();
         filter.addAction(SCAN_ACTION);
         registerReceiver(scanBroadcastReceiver, filter);
-        //scanBroadcastReceiver.initScanManger();
+        scanBroadcastReceiver.initScanManger();
     }
 
     @Override
