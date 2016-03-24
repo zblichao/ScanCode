@@ -34,7 +34,7 @@ public class OutOrderAdapter extends BaseAdapter {
         mContext = context;
         inflater = LayoutInflater.from(context);
         list = new LinkedList<JSONObject>();
-
+        listAll = new LinkedList<JSONObject>();
     }
 
     public List<JSONObject> getList() {
