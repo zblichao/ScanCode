@@ -66,6 +66,7 @@ public class LoginActivity extends BaseActivity {
 
             }
         });
+
     }
 
     Handler handler = new Handler() {
