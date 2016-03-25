@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.InputType;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -37,7 +39,32 @@ public class LoginActivity extends BaseActivity {
         login = (Button) findViewById(R.id.login);
         login.setOnClickListener(this);
         dao = new LoginDAO();
+        username.setInputType(InputType.TYPE_NULL);
+        username.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                EditText editText = (EditText) v;
+                editText.setInputType(InputType.TYPE_CLASS_TEXT);
+                editText.requestFocus();
+                InputMethodManager mgr = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                mgr.showSoftInput(editText, InputMethodManager.SHOW_FORCED);
+                return true;
 
+            }
+        });
+        password.setInputType(InputType.TYPE_NULL);
+        password.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                EditText editText = (EditText) v;
+                editText.setInputType(InputType.TYPE_CLASS_TEXT);
+                editText.requestFocus();
+                InputMethodManager mgr = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                mgr.showSoftInput(editText, InputMethodManager.SHOW_FORCED);
+                return true;
+
+            }
+        });
     }
 
     Handler handler = new Handler() {
