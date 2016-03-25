@@ -37,6 +37,33 @@ public class LoginActivity extends BaseActivity {
         login = (Button) findViewById(R.id.login);
         login.setOnClickListener(this);
         dao = new LoginDAO();
+        username.setInputType(InputType.TYPE_NULL);
+        username.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                EditText editText = (EditText) v;
+                editText.setInputType(InputType.TYPE_CLASS_TEXT);
+                editText.requestFocus();
+                InputMethodManager mgr = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                mgr.showSoftInput(editText, InputMethodManager.SHOW_FORCED);
+                return true;
+
+            }
+        });
+
+        password.setInputType(InputType.TYPE_NULL);
+        password.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                EditText editText = (EditText) v;
+                editText.setInputType(InputType.TYPE_CLASS_TEXT);
+                editText.requestFocus();
+                InputMethodManager mgr = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                mgr.showSoftInput(editText, InputMethodManager.SHOW_FORCED);
+                return true;
+
+            }
+        });
 
     }
 
