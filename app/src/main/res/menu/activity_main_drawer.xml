@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/quality_testing_fragment"
+            android:checked="true"
+            android:title="质检" />
+        <item
+            android:id="@+id/instock_fragment"
+
+            android:title="入库" />
+        <item
+            android:id="@+id/outstock_fragment"
+
+            android:title="出库" />
+        <item
+            android:id="@+id/check_order_fragment"
+
+            android:title="查看订单" />
+    </group>
+
+
+</menu>
