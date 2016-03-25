@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 
+import com.lichao.scancode.MyApplication;
 import com.lichao.scancode.R;
 import com.lichao.scancode.adapter.OutOrderDetialAdapter;
 import com.lichao.scancode.dao.OutOrderDetialDAO;
@@ -22,6 +23,7 @@ import com.lichao.scancode.entity.NameValuePair;
 import com.lichao.scancode.receiver.EAN128Parser;
 import com.lichao.scancode.receiver.HIBCParser;
 import com.lichao.scancode.receiver.ScanBroadcastReceiver;
+import com.lichao.scancode.util.CheckNetWorkUtils;
 import com.lichao.scancode.util.JSONHelper;
 import com.lichao.scancode.util.ToastUtil;
 
@@ -135,7 +137,11 @@ public class OutOrderDetialActivity extends BaseActivity {
     }
 
     private void getOrders() {
-
+        if(!CheckNetWorkUtils.updateConnectedFlags(MyApplication.myApplication))
+        {
+            ToastUtil.showLongToast(MyApplication.myApplication, "网络不可用");
+            return ;
+        }
         progressDialog = ProgressDialog.show(OutOrderDetialActivity.this, // context
                 "", // title
                 "Loading. Please wait...", // message
@@ -156,7 +162,11 @@ public class OutOrderDetialActivity extends BaseActivity {
 
 
     private void outOrders() {
-
+        if(!CheckNetWorkUtils.updateConnectedFlags(MyApplication.myApplication))
+        {
+            ToastUtil.showLongToast(MyApplication.myApplication, "网络不可用");
+            return ;
+        }
         TextView lotText = (TextView) alertDialog.findViewById(R.id.LOT);
         final String lot = lotText.getText().toString();
         TextView expireText = (TextView)alertDialog. findViewById(R.id.date);
@@ -204,6 +214,11 @@ public class OutOrderDetialActivity extends BaseActivity {
 
 
     private void getProductInfo() {
+        if(!CheckNetWorkUtils.updateConnectedFlags(MyApplication.myApplication))
+        {
+            ToastUtil.showLongToast(MyApplication.myApplication, "网络不可用");
+            return ;
+        }
         if(alertDialog!=null&&alertDialog.isShowing())
             return;
         alertDialog.show();

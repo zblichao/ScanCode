@@ -2,6 +2,7 @@ package com.lichao.scancode.fragment;
 
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,6 +13,7 @@ import android.support.v4.app.NotificationCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -29,6 +31,7 @@ import com.lichao.scancode.receiver.BarcodeReceiver;
 import com.lichao.scancode.receiver.EAN128Parser;
 import com.lichao.scancode.receiver.HIBCParser;
 import com.lichao.scancode.receiver.ScanBroadcastReceiver;
+import com.lichao.scancode.util.CheckNetWorkUtils;
 import com.lichao.scancode.util.ToastUtil;
 
 import org.json.JSONArray;
@@ -138,6 +141,15 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
         return root;
     }
 
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden) {
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(root.getWindowToken(), 0);
+
+        }
+    }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -334,6 +346,11 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
     };
 
     private void searchProductByCode() {
+        if(!CheckNetWorkUtils.updateConnectedFlags(MyApplication.myApplication))
+        {
+            ToastUtil.showLongToast(MyApplication.myApplication, "网络不可用");
+            return ;
+        }
         progressDialog = ProgressDialog.show(this.getContext(), // context
                 "", // title
                 "Loading. Please wait...", // message
@@ -352,6 +369,11 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
     }
 
     private void instock() {
+        if(!CheckNetWorkUtils.updateConnectedFlags(MyApplication.myApplication))
+        {
+            ToastUtil.showLongToast(MyApplication.myApplication, "网络不可用");
+            return ;
+        }
         progressDialog = ProgressDialog.show(this.getContext(), // context
                 "", // title
                 "Loading. Please wait...", // message

@@ -2,6 +2,7 @@ package com.lichao.scancode.fragment;
 
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,14 +11,18 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.lichao.scancode.MyApplication;
 import com.lichao.scancode.R;
 import com.lichao.scancode.activity.OrderDetailActivity;
 import com.lichao.scancode.adapter.OrderAdapter;
 import com.lichao.scancode.dao.CheckOrderFragmentDAO;
+import com.lichao.scancode.util.CheckNetWorkUtils;
 import com.lichao.scancode.util.JSONHelper;
+import com.lichao.scancode.util.ToastUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -65,8 +70,9 @@ public class CheckOrderFragment extends Fragment {
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        if(!hidden)
-        {
+        if (!hidden) {
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(root.getWindowToken(), 0);
             getOrders();
         }
     }
@@ -94,7 +100,11 @@ public class CheckOrderFragment extends Fragment {
 
 
     private void getOrders() {
-
+        if(!CheckNetWorkUtils.updateConnectedFlags(MyApplication.myApplication))
+        {
+            ToastUtil.showLongToast(MyApplication.myApplication, "网络不可用");
+            return ;
+        }
         progressDialog = ProgressDialog.show(this.getContext(), // context
                 "", // title
                 "Loading. Please wait...", // message

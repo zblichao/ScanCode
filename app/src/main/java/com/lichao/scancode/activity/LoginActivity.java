@@ -13,6 +13,7 @@ import com.lichao.scancode.MyApplication;
 import com.lichao.scancode.R;
 import com.lichao.scancode.dao.LoginDAO;
 import com.lichao.scancode.entity.User;
+import com.lichao.scancode.util.CheckNetWorkUtils;
 import com.lichao.scancode.util.ToastUtil;
 
 import org.json.JSONException;
@@ -79,6 +80,11 @@ public class LoginActivity extends BaseActivity {
     };
 
     private void runLogin() {
+        if(!CheckNetWorkUtils.updateConnectedFlags(MyApplication.myApplication))
+        {
+            ToastUtil.showLongToast(MyApplication.myApplication, "网络不可用");
+            return ;
+        }
         progressDialog = ProgressDialog.show(this, // context
                 "", // title
                 "Loading. Please wait...", // message

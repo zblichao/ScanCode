@@ -82,7 +82,7 @@
                 android:layout_height="match_parent">
 
                 <LinearLayout
-                    android:id="@+id/tabdispatched"
+                    android:id="@+id/tabqualified"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical">
@@ -95,7 +95,7 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/tabqualified"
+                    android:id="@+id/tabdispatched"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical">
