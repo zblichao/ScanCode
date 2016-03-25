@@ -52,6 +52,7 @@ public class LoginActivity extends BaseActivity {
 
             }
         });
+
         password.setInputType(InputType.TYPE_NULL);
         password.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -127,7 +128,7 @@ public class LoginActivity extends BaseActivity {
                 msg.sendToTarget();
             }
         }.start();
-        ;
+
     }
 
     @Override
