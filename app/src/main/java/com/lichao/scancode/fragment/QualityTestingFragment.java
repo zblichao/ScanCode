@@ -137,7 +137,6 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
         if (!hidden) {
             InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(root.getWindowToken(), 0);
-
         }
     }
     @Override
@@ -156,7 +155,7 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
 
     @Override
     public void onReceiveBarcode(String type, String barcodeStr) {
-        ToastUtil.showShortToast(MyApplication.myApplication, type + ":" + barcodeStr);
+//        ToastUtil.showShortToast(MyApplication.myApplication, type + ":" + barcodeStr);
 
         ArrayList<NameValuePair> list;
         EditText editText;
@@ -188,6 +187,9 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
                 this.barcodeStr = barcodeStr.substring(0, 16);
                 setTextEditTextById(R.id.product_barcode_primary, barcodeStr.substring(0, 16));
                 setTextEditTextById(R.id.product_barcode_secondary, barcodeStr.substring(16));
+                if(progressDialog!=null && progressDialog.isShowing())
+                    return;
+                searchProductByCode();
 
                 list = hibcParser.HIBCSecondaryParser(barcodeStr.substring(16));
                 for (int i = 0; i < list.size(); i++) {
@@ -200,6 +202,9 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
             case "HIBC-P":
                 this.barcodeStr = barcodeStr;
                 setTextEditTextById(R.id.product_barcode_primary, barcodeStr);
+                if(progressDialog!=null && progressDialog.isShowing())
+                    return;
+                searchProductByCode();
                 break;
             case "HIBC-S":
                 this.barcodeStr = barcodeStr;
@@ -213,17 +218,24 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
                 }
                 break;
             case "EAN13":
+                this.barcodeStr = barcodeStr;
+                setTextEditTextById(R.id.product_barcode_primary, barcodeStr);
+                if(progressDialog!=null && progressDialog.isShowing())
+                    return;
+                searchProductByCode();
                 break;
             case "hospital-P":
                 this.barcodeStr = barcodeStr.split("\\*")[0];
                 setTextEditTextById(R.id.hospital_barcode_primary, barcodeStr.split("\\*")[0]);
                 setTextEditTextById(R.id.LOT, barcodeStr.split("\\*")[1]);
+                if(progressDialog!=null && progressDialog.isShowing())
+                    return;
+                searchProductByCode();
                 break;
 
             case "hospital-S":
                 this.barcodeStr = barcodeStr.split("\\*")[0];
                 setTextEditTextById(R.id.expire, barcodeStr.split("\\*")[0]);
-                searchProductByCode();
                 break;
         }
 
@@ -375,7 +387,7 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
                 try {
 
                     String product_id = jsonProduct.getString("rowid");
-                    String det_rowid = currentOrder.getString("det_rowid");
+                    String det_rowid = currentOrder.getJSONObject("ordered").getString("det_rowid");
                     String order_id = currentOrder.getString("order_id");
                     String pu = currentOrder.getString("pu");
                     EditText qualifiedEdit = (EditText) root.findViewById(R.id.qualified_qty);

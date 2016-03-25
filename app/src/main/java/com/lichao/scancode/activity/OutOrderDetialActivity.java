@@ -45,7 +45,7 @@ public class OutOrderDetialActivity extends BaseActivity {
     private String barcodeStr;
     private String lot;
     private String expire;
-
+    private View windowOut;
     private EAN128Parser ean128Parser = new EAN128Parser(); // 你看看放哪儿合适，我一般放在onCreate
     private HIBCParser hibcParser = new HIBCParser();
     private AlertDialog alertDialog;
@@ -56,7 +56,9 @@ public class OutOrderDetialActivity extends BaseActivity {
         setContentView(R.layout.activity_out_order_detial);
         Intent intent = getIntent();
         id = intent.getStringExtra("order_id");
-
+        LayoutInflater inflater = LayoutInflater.from(this);
+        windowOut = inflater.inflate(
+                R.layout.window_out, null);
         list = (ExpandableListView) findViewById(R.id.list);
         adapter = new OutOrderDetialAdapter(this);
         list.setAdapter(adapter);
@@ -66,8 +68,8 @@ public class OutOrderDetialActivity extends BaseActivity {
         scanBroadcastReceiver.initScanManger();
         dao = new OutOrderDetialDAO();
         getOrders();
-        showDialog_Layout( this  );
-        //        barcodeStr = "SPH00002159";
+        showDialog_Layout(this);
+//        barcodeStr = "SPH00002159";
 //        expire = "1707136";
 //        lot = "2018/07/01";
         // getProductInfo();
@@ -91,8 +93,6 @@ public class OutOrderDetialActivity extends BaseActivity {
                     }
                     break;
                 case 2:
-                    if (progressDialog != null && progressDialog.isShowing())
-                        progressDialog.dismiss();
                     try {
                         JSONObject json = new JSONObject(resProduct);
                         setTextById(json, R.id.productName, "product_name");
@@ -116,12 +116,13 @@ public class OutOrderDetialActivity extends BaseActivity {
                     }
                     ToastUtil.showLongToast(getApplicationContext(), resOut);
                     break;
+
             }
         }
     };
 
     private TextView setTextById(JSONObject json, int id, String key) {
-        TextView textView = (TextView) alertDialog.findViewById(R.id.productName);
+        TextView textView = (TextView) windowOut.findViewById(R.id.productName);
         try {
             textView.setText(json.getString("product_name"));
         } catch (JSONException e) {
@@ -131,7 +132,7 @@ public class OutOrderDetialActivity extends BaseActivity {
     }
 
     private TextView setTextById(int id, String value) {
-        TextView textView = (TextView) alertDialog.findViewById(R.id.productName);
+        TextView textView = (TextView) windowOut.findViewById(R.id.productName);
         textView.setText(value);
         return textView;
     }
@@ -162,16 +163,12 @@ public class OutOrderDetialActivity extends BaseActivity {
 
 
     private void outOrders() {
-        if(!CheckNetWorkUtils.updateConnectedFlags(MyApplication.myApplication))
-        {
-            ToastUtil.showLongToast(MyApplication.myApplication, "网络不可用");
-            return ;
-        }
-        TextView lotText = (TextView) alertDialog.findViewById(R.id.LOT);
+
+        TextView lotText = (TextView) windowOut.findViewById(R.id.LOT);
         final String lot = lotText.getText().toString();
-        TextView expireText = (TextView)alertDialog. findViewById(R.id.date);
+        TextView expireText = (TextView)windowOut. findViewById(R.id.date);
         final String expire = expireText.getText().toString();
-        TextView qtyText = (TextView)alertDialog. findViewById(R.id.num);
+        TextView qtyText = (TextView)windowOut. findViewById(R.id.num);
         final String qty = qtyText.getText().toString();
         progressDialog = ProgressDialog.show(OutOrderDetialActivity.this, // context
                 "", // title
@@ -214,15 +211,9 @@ public class OutOrderDetialActivity extends BaseActivity {
 
 
     private void getProductInfo() {
-        if(!CheckNetWorkUtils.updateConnectedFlags(MyApplication.myApplication))
-        {
-            ToastUtil.showLongToast(MyApplication.myApplication, "网络不可用");
-            return ;
-        }
         if(alertDialog!=null&&alertDialog.isShowing())
             return;
         alertDialog.show();
-
         new Thread() {
             @Override
             public void run() {
@@ -330,10 +321,8 @@ public class OutOrderDetialActivity extends BaseActivity {
 
 
     private void showDialog_Layout(Context context) {
-        LayoutInflater inflater = LayoutInflater.from(this);
-        View windowOut = inflater.inflate(
-                R.layout.window_out, null);
-          AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(false);
         builder.setView(windowOut);
         builder.setPositiveButton("确认",
@@ -357,6 +346,7 @@ public class OutOrderDetialActivity extends BaseActivity {
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         alertDialog.dismiss();
+
                     }
                 });
 

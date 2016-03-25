@@ -17,8 +17,6 @@ import com.lichao.scancode.MyApplication;
 import com.lichao.scancode.R;
 import com.lichao.scancode.dao.OrderDetailDAO;
 import com.lichao.scancode.http.HttpUtil;
-import com.lichao.scancode.util.CheckNetWorkUtils;
-import com.lichao.scancode.util.ToastUtil;
 
 public class OrderDetailActivity extends BaseActivity {
     private String id;
@@ -31,16 +29,12 @@ public class OrderDetailActivity extends BaseActivity {
     private WebView webView1;
     private WebView webView2;
     private boolean hasload1 = false;
-    private boolean hasload2 = false;
+    private  boolean hasload2 = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_detail);
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayShowTitleEnabled(true);
-        actionBar.setDisplayHomeAsUpEnabled(true); // 决定左上角图标的右侧是否有向左的小箭头, true
-        // 有小箭头，并且图标可以点击
-        actionBar.setDisplayShowHomeEnabled(false);
 
         Intent intent = getIntent();
         id = intent.getStringExtra("id");
@@ -59,11 +53,7 @@ public class OrderDetailActivity extends BaseActivity {
         tabSpec2.setContent(R.id.tabqualified);
         tabSpec2.setIndicator("Qualified");
         mTabHost.addTab(tabSpec2);
-        if(!CheckNetWorkUtils.updateConnectedFlags(MyApplication.myApplication))
-        {
-            ToastUtil.showLongToast(MyApplication.myApplication, "网络不可用");
-            return ;
-        }
+
         webView1 = (WebView) findViewById(R.id.web1);
         webView1.setWebViewClient(new WebViewClient() {
             @Override
@@ -74,18 +64,25 @@ public class OrderDetailActivity extends BaseActivity {
                 return true;
             }
         });
-        webView1.setWebChromeClient(new WebChromeClient() {
+
+        webView1.setWebChromeClient(new WebChromeClient(){
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
-                super.onProgressChanged(view, newProgress);
-                if (newProgress == 100 && !hasload1) {
-                    hasload1 = true;
-                    webView1.postUrl(HttpUtil.uriAPI + "index.php?action=get_order_qualified&order_id=" + id, ("username=" + MyApplication.myApplication.getUser().getName() + "&password=" + MyApplication.myApplication.getUser().getPassword()).getBytes());
+                if (newProgress == 100) {
+                    if(!hasload1)
+                    {
+                        hasload1 =true;
+                        webView1.postUrl(HttpUtil.uriAPI + "index.php?action=get_order_qualified&order_id=" + id, ("username=" + MyApplication.myApplication.getUser().getName() + "&password=" + MyApplication.myApplication.getUser().getPassword()).getBytes());
 
+                    }
                 }
+                super.onProgressChanged(view, newProgress);
             }
         });
         webView1.postUrl(HttpUtil.uriAPI + "index.php", ("action=mobile_login&username=" + MyApplication.myApplication.getUser().getName() + "&password=" + MyApplication.myApplication.getUser().getPassword()).getBytes());
+
+
+
 
         webView2 = (WebView) findViewById(R.id.web2);
         webView2.setWebViewClient(new WebViewClient() {
@@ -97,19 +94,22 @@ public class OrderDetailActivity extends BaseActivity {
                 return true;
             }
         });
-        webView2.setWebChromeClient(new WebChromeClient() {
+        webView2.setWebChromeClient(new WebChromeClient(){
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
-                super.onProgressChanged(view, newProgress);
-                if (newProgress == 100 && !hasload2) {
-                    hasload2 = true;
-                    webView2.postUrl(HttpUtil.uriAPI + "index.php?action=get_order_dispatched&order_id=" + id, ("username=" + MyApplication.myApplication.getUser().getName() + "&password" + MyApplication.myApplication.getUser().getPassword()).getBytes());
+                if (newProgress == 100) {
+                    if(!hasload2)
+                    {
+                        hasload2 =true;
+                        webView2.postUrl(HttpUtil.uriAPI + "index.php?action=get_order_dispatched&order_id=" + id, ("username=" + MyApplication.myApplication.getUser().getName() + "&password=" + MyApplication.myApplication.getUser().getPassword()).getBytes());
 
+                    }
                 }
+                super.onProgressChanged(view, newProgress);
             }
         });
         webView2.postUrl(HttpUtil.uriAPI + "index.php", ("action=mobile_login&username=" + MyApplication.myApplication.getUser().getName() + "&password" + MyApplication.myApplication.getUser().getPassword()).getBytes());
-         radioGroup
+        radioGroup
                 .setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(RadioGroup group, int checkedId) {

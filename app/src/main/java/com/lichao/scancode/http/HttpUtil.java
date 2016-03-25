@@ -30,11 +30,9 @@ public class HttpUtil {
         for (int i = 0; i < param.size(); i++) {
             nameValuePair = param.get(i);
             if (i == 0) {
-                if(nameValuePair.getValue()!=null)
                 sbparm.append(String.format("%s=%s", nameValuePair.getName(),
                         URLEncoder.encode(nameValuePair.getValue(), "UTF-8")));
             } else {
-                if(nameValuePair.getValue()!=null)
                 sbparm.append("&"
                         + String.format("%s=%s", nameValuePair.getName(),
                         URLEncoder.encode(nameValuePair.getValue(), "UTF-8")));
@@ -71,11 +69,9 @@ public class HttpUtil {
         for (int i = 0; i < params.size(); i++) {
             nameValuePair = params.get(i);
             if (i == 0) {
-                if(nameValuePair.getValue()!=null)
                 sbparm.append(String.format("%s=%s", nameValuePair.getName(),
                         URLEncoder.encode(nameValuePair.getValue(), "UTF-8")));
             } else {
-                if(nameValuePair.getValue()!=null)
                 sbparm.append("&"
                         + String.format("%s=%s", nameValuePair.getName(),
                         URLEncoder.encode(nameValuePair.getValue(), "UTF-8")));

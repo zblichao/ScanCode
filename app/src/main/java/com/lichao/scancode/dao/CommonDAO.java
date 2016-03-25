@@ -21,7 +21,7 @@ public class CommonDAO {
     public String searchProductByCode(String barcode) {
 
         List<NameValuePair> params = new ArrayList<NameValuePair>();
-        params.add(new NameValuePair("barcode", "SPH00002159"));
+        params.add(new NameValuePair("barcode", barcode));
         params.add(new NameValuePair("action", "get_info"));
         String res = "";
         try {

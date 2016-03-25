@@ -105,6 +105,7 @@ public class CheckOrderFragment extends Fragment {
             ToastUtil.showLongToast(MyApplication.myApplication, "网络不可用");
             return ;
         }
+
         progressDialog = ProgressDialog.show(this.getContext(), // context
                 "", // title
                 "Loading. Please wait...", // message
