@@ -36,7 +36,7 @@ public class LoginActivity extends BaseActivity {
         password = (EditText) findViewById(R.id.password);
         login = (Button) findViewById(R.id.login);
         login.setOnClickListener(this);
-        //dao = new LoginDAO();
+        dao = new LoginDAO();
 
     }
 
