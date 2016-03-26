@@ -136,6 +136,7 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
         dao = new InstockFragmentDAO();
         //getWarehouses();
         //searchProductByCode();
+        
         return root;
     }
     public void onHiddenChanged(boolean hidden) {
@@ -143,7 +144,8 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
         if (!hidden) {
             InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(root.getWindowToken(), 0);
-
+            EditText dispatched_qty =(EditText) root.findViewById(R.id.dispatched_qty);
+            dispatched_qty.requestFocus();
         }
     }
     @Override

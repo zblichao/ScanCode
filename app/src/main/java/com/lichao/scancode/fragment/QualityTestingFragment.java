@@ -129,6 +129,8 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
         dao = new QualityTestingFragmentDAO();
         //getWarehouses();
         //searchProductByCode();
+        EditText qualified_qty = (EditText) root.findViewById(R.id.qualified_qty);
+        qualified_qty.requestFocus();
         return root;
     }
     @Override
@@ -137,6 +139,8 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
         if (!hidden) {
             InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(root.getWindowToken(), 0);
+            EditText qualified_qty = (EditText) root.findViewById(R.id.qualified_qty);
+            qualified_qty.requestFocus();
         }
     }
     @Override
