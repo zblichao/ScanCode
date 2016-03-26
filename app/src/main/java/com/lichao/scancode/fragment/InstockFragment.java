@@ -136,7 +136,7 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
         dao = new InstockFragmentDAO();
         //getWarehouses();
         //searchProductByCode();
-        
+
         return root;
     }
     public void onHiddenChanged(boolean hidden) {
