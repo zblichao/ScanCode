@@ -166,6 +166,7 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
             chooseWarehouse.setText("选择仓库");
             setTextEditTextById(R.id.order_qty, "");
             setTextEditTextById(R.id.qualified_qty, "");
+            setTextEditTextById(R.id.dispatched_qty, "");
             currentOrder = null;
         }
     }
