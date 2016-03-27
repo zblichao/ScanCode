@@ -162,6 +162,7 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
             chooseWarehouse.setText("选择仓库");
             setTextEditTextById(R.id.order_qty, "");
             setTextEditTextById(R.id.qualified_qty, "");
+            currentOrder=null;
         }
     }
 
@@ -378,6 +379,7 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
                             chooseWarehouse.setText("选择仓库");
                             setTextEditTextById(R.id.order_qty, "");
                             setTextEditTextById(R.id.qualified_qty, "");
+                            currentOrder=null;
                         } else {
                             ToastUtil.showLongToast(getContext(), "提交服务器失败");
                         }
