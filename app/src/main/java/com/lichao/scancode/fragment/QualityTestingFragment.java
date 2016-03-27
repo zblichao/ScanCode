@@ -154,6 +154,7 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
             setTextEditTextById(R.id.supplier_name, "");
             setTextEditTextById(R.id.LOT, "");
             setTextEditTextById(R.id.expire, "");
+
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.list_item, R.id.text);
             orders.setAdapter(adapter);
             chooseWarehouse.setText("选择仓库");
