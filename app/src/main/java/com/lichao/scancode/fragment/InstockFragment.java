@@ -120,6 +120,8 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
                         e.printStackTrace();
                     }
                     startActivity(intent);
+                }else {
+                    ToastUtil.showShortToast(getContext(),"请扫码并选择订单");
                 }
             }
         });
