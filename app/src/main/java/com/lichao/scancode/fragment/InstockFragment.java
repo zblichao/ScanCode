@@ -9,8 +9,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.text.Selection;
-import android.text.Spannable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -360,10 +358,8 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
 
                                 EditText editText = setTextEditTextById(R.id.dispatched_qty, (qualified_qty - dispatched_qty) + "");
                                 CharSequence text = editText.getText();
-                                if (text instanceof Spannable) {
-                                    Spannable spanText = (Spannable) text;
-                                    Selection.setSelection(spanText, text.length());
-                                }
+                                editText.setSelection(text.length());
+
                             }
 
 

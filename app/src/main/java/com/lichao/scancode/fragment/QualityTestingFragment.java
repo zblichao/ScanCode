@@ -114,8 +114,8 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
                     }
 
                     startActivity(intent);
-                }else {
-                    ToastUtil.showShortToast(getContext(),"请扫码并选择订单");
+                } else {
+                    ToastUtil.showShortToast(getContext(), "请扫码并选择订单");
                 }
             }
         });
@@ -162,7 +162,7 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
             chooseWarehouse.setText("选择仓库");
             setTextEditTextById(R.id.order_qty, "");
             setTextEditTextById(R.id.qualified_qty, "");
-            currentOrder=null;
+            currentOrder = null;
         }
     }
 
@@ -202,13 +202,11 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
                 try {
                     list = ean128Parser.parseBarcodeToList(barcodeStr);
                     for (int i = 0; i < list.size(); i++) {
-                        if (list.get(i).getName().equals("LOT"))
-                        {
-                            editText =setTextEditTextById(R.id.LOT, list.get(i).getValue());
+                        if (list.get(i).getName().equals("LOT")) {
+                            editText = setTextEditTextById(R.id.LOT, list.get(i).getValue());
                             editText.setEnabled(false);
                         }
-                        if (list.get(i).getName().equals("expire"))
-                        {
+                        if (list.get(i).getName().equals("expire")) {
                             editText = setTextEditTextById(R.id.expire, list.get(i).getValue());
                             editText.setEnabled(false);
                         }
@@ -219,9 +217,9 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
                 break;
             case "code128":
                 this.barcodeStr = barcodeStr.substring(0, 16);
-                editText =setTextEditTextById(R.id.product_barcode_primary, barcodeStr.substring(0, 16));
+                editText = setTextEditTextById(R.id.product_barcode_primary, barcodeStr.substring(0, 16));
                 editText.setEnabled(false);
-                editText =setTextEditTextById(R.id.product_barcode_secondary, barcodeStr.substring(16));
+                editText = setTextEditTextById(R.id.product_barcode_secondary, barcodeStr.substring(16));
                 editText.setEnabled(false);
                 if (progressDialog != null && progressDialog.isShowing())
                     return;
@@ -229,21 +227,19 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
 
                 list = hibcParser.HIBCSecondaryParser(barcodeStr.substring(16));
                 for (int i = 0; i < list.size(); i++) {
-                    if (list.get(i).getName().equals("LOT"))
-                    {
-                        editText =setTextEditTextById(R.id.LOT, list.get(i).getValue());
+                    if (list.get(i).getName().equals("LOT")) {
+                        editText = setTextEditTextById(R.id.LOT, list.get(i).getValue());
                         editText.setEnabled(false);
                     }
-                    if (list.get(i).getName().equals("expire"))
-                    {
-                        editText =setTextEditTextById(R.id.expire, list.get(i).getValue());
+                    if (list.get(i).getName().equals("expire")) {
+                        editText = setTextEditTextById(R.id.expire, list.get(i).getValue());
                         editText.setEnabled(false);
                     }
                 }
                 break;
             case "HIBC-P":
                 this.barcodeStr = barcodeStr;
-                editText =setTextEditTextById(R.id.product_barcode_primary, barcodeStr);
+                editText = setTextEditTextById(R.id.product_barcode_primary, barcodeStr);
                 editText.setEnabled(false);
                 if (progressDialog != null && progressDialog.isShowing())
                     return;
@@ -251,17 +247,15 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
                 break;
             case "HIBC-S":
                 this.barcodeStr = barcodeStr;
-                editText =setTextEditTextById(R.id.product_barcode_secondary, barcodeStr);
+                editText = setTextEditTextById(R.id.product_barcode_secondary, barcodeStr);
                 editText.setEnabled(false);
                 list = hibcParser.HIBCSecondaryParser(barcodeStr);
                 for (int i = 0; i < list.size(); i++) {
-                    if (list.get(i).getName().equals("LOT"))
-                    {
-                        editText =  setTextEditTextById(R.id.LOT, list.get(i).getValue());
+                    if (list.get(i).getName().equals("LOT")) {
+                        editText = setTextEditTextById(R.id.LOT, list.get(i).getValue());
                         editText.setEnabled(false);
                     }
-                    if (list.get(i).getName().equals("expire"))
-                    {
+                    if (list.get(i).getName().equals("expire")) {
                         editText = setTextEditTextById(R.id.expire, list.get(i).getValue());
                         editText.setEnabled(false);
                     }
@@ -279,7 +273,7 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
                 this.barcodeStr = barcodeStr.split("\\*")[0];
                 editText = setTextEditTextById(R.id.hospital_barcode_primary, barcodeStr.split("\\*")[0]);
                 editText.setEnabled(false);
-                editText =  setTextEditTextById(R.id.LOT, barcodeStr.split("\\*")[1]);
+                editText = setTextEditTextById(R.id.LOT, barcodeStr.split("\\*")[1]);
                 editText.setEnabled(false);
                 if (progressDialog != null && progressDialog.isShowing())
                     return;
@@ -288,9 +282,9 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
 
             case "hospital-S":
                 this.barcodeStr = barcodeStr.split("\\*")[0];
-                editText =setTextEditTextById(R.id.product_barcode_secondary, barcodeStr);
+                editText = setTextEditTextById(R.id.product_barcode_secondary, barcodeStr);
                 editText.setEnabled(false);
-                editText =  setTextEditTextById(R.id.expire, barcodeStr.split("\\*")[0]);
+                editText = setTextEditTextById(R.id.expire, barcodeStr.split("\\*")[0]);
                 editText.setEnabled(false);
 
                 break;
@@ -344,8 +338,9 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
                                 for (int i = 0; i < qualified.length(); i++) {
                                     qualified_qty += qualified.getJSONObject(i).getInt("qty");
                                 }
-                                setTextEditTextById(R.id.qualified_qty, (currentOrder.getJSONObject("ordered").getInt("ordered_qty") - qualified_qty) + "");
-
+                                EditText editText = setTextEditTextById(R.id.qualified_qty, (currentOrder.getJSONObject("ordered").getInt("ordered_qty") - qualified_qty) + "");
+                                CharSequence text = editText.getText();
+                                editText.setSelection(text.length());
                             }
 
 
@@ -379,7 +374,7 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
                             chooseWarehouse.setText("选择仓库");
                             setTextEditTextById(R.id.order_qty, "");
                             setTextEditTextById(R.id.qualified_qty, "");
-                            currentOrder=null;
+                            currentOrder = null;
                         } else {
                             ToastUtil.showLongToast(getContext(), "提交服务器失败");
                         }
