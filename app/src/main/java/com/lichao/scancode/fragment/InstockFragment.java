@@ -377,7 +377,7 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
                     ToastUtil.showShortToast(getContext(),res);
                     try {
                         JSONObject jsonObject = new JSONObject(res);
-                        if (jsonObject.getBoolean("qualify")) {
+                        if (jsonObject.getBoolean("dispatch")) {
                             ToastUtil.showLongToast(getContext(), "提交服务器成功");
                             setTextEditTextById(R.id.product_barcode_primary, "");
                             setTextEditTextById(R.id.product_barcode_secondary, "");
@@ -396,6 +396,7 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
                             chooseWarehouse.setText("选择仓库");
                             setTextEditTextById(R.id.order_qty, "");
                             setTextEditTextById(R.id.qualified_qty, "");
+                            setTextEditTextById(R.id.dispatched_qty, "");
                             currentOrder = null;
                         } else {
                             ToastUtil.showLongToast(getContext(), "提交服务器失败");
