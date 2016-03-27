@@ -78,8 +78,7 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
                         setTextEditTextById(R.id.order_qty, "ordered_qty", currentOrder.getJSONObject("ordered"));
                         setTextEditTextById(R.id.supplier_name, "supplier_name", currentOrder);
                         JSONArray qualified = currentOrder.getJSONArray("qualified");
-                        if(qualified.length()>0)
-                        {
+                        if (qualified.length() > 0) {
                             JSONObject qualifyDetial = qualified.getJSONObject(0);
                             setTextEditTextById(R.id.LOT, "LOT", qualifyDetial);
                             setTextEditTextById(R.id.expire, "expire", qualifyDetial);
@@ -139,15 +138,17 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
 
         return root;
     }
+
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         if (!hidden) {
             InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(root.getWindowToken(), 0);
-            EditText dispatched_qty =(EditText) root.findViewById(R.id.dispatched_qty);
+            EditText dispatched_qty = (EditText) root.findViewById(R.id.dispatched_qty);
             dispatched_qty.requestFocus();
         }
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -171,21 +172,29 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
         switch (type) {
             case "code128-P":
                 this.barcodeStr = barcodeStr;
-                setTextEditTextById(R.id.product_barcode_primary, barcodeStr);
-                if(progressDialog!=null && progressDialog.isShowing())
+                editText = setTextEditTextById(R.id.product_barcode_primary, barcodeStr);
+                editText.setEnabled(false);
+                if (progressDialog != null && progressDialog.isShowing())
                     return;
                 searchProductByCode();
                 break;
             case "code128-S":
                 this.barcodeStr = barcodeStr;
-                setTextEditTextById(R.id.product_barcode_secondary, barcodeStr);
+                editText =  setTextEditTextById(R.id.product_barcode_secondary, barcodeStr);
+                editText.setEnabled(false);
                 try {
                     list = ean128Parser.parseBarcodeToList(barcodeStr);
                     for (int i = 0; i < list.size(); i++) {
                         if (list.get(i).getName().equals("LOT"))
-                            setTextEditTextById(R.id.LOT, list.get(i).getValue());
+                        {
+                            editText =   setTextEditTextById(R.id.LOT, list.get(i).getValue());
+                            editText.setEnabled(false);
+                        }
                         if (list.get(i).getName().equals("expire"))
-                            setTextEditTextById(R.id.expire, list.get(i).getValue());
+                        {
+                            editText =  setTextEditTextById(R.id.expire, list.get(i).getValue());
+                            editText.setEnabled(false);
+                        }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -193,57 +202,74 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
                 break;
             case "code128":
                 this.barcodeStr = barcodeStr.substring(0, 16);
-                setTextEditTextById(R.id.product_barcode_primary, barcodeStr.substring(0, 16));
-                setTextEditTextById(R.id.product_barcode_secondary, barcodeStr.substring(16));
-                if(progressDialog!=null && progressDialog.isShowing())
+                editText = setTextEditTextById(R.id.product_barcode_primary, barcodeStr.substring(0, 16));
+                editText.setEnabled(false);
+                editText = setTextEditTextById(R.id.product_barcode_secondary, barcodeStr.substring(16));
+                editText.setEnabled(false);
+                if (progressDialog != null && progressDialog.isShowing())
                     return;
                 searchProductByCode();
 
                 list = hibcParser.HIBCSecondaryParser(barcodeStr.substring(16));
                 for (int i = 0; i < list.size(); i++) {
-                    if (list.get(i).getName().equals("LOT"))
-                        setTextEditTextById(R.id.LOT, list.get(i).getValue());
-                    if (list.get(i).getName().equals("expire"))
-                        setTextEditTextById(R.id.expire, list.get(i).getValue());
+                    if (list.get(i).getName().equals("LOT")) {
+                        editText = setTextEditTextById(R.id.LOT, list.get(i).getValue());
+                        editText.setEnabled(false);
+                    }
+                    if (list.get(i).getName().equals("expire")) {
+                        editText = setTextEditTextById(R.id.expire, list.get(i).getValue());
+                        editText.setEnabled(false);
+                    }
                 }
                 break;
             case "HIBC-P":
                 this.barcodeStr = barcodeStr;
-                setTextEditTextById(R.id.product_barcode_primary, barcodeStr);
-                if(progressDialog!=null && progressDialog.isShowing())
+                editText = setTextEditTextById(R.id.product_barcode_primary, barcodeStr);
+                editText.setEnabled(false);
+                if (progressDialog != null && progressDialog.isShowing())
                     return;
                 searchProductByCode();
                 break;
             case "HIBC-S":
                 this.barcodeStr = barcodeStr;
-                setTextEditTextById(R.id.product_barcode_secondary, barcodeStr);
+                editText = setTextEditTextById(R.id.product_barcode_secondary, barcodeStr);
+                editText.setEnabled(false);
                 list = hibcParser.HIBCSecondaryParser(barcodeStr);
                 for (int i = 0; i < list.size(); i++) {
-                    if (list.get(i).getName().equals("LOT"))
-                        setTextEditTextById(R.id.LOT, list.get(i).getValue());
-                    if (list.get(i).getName().equals("expire"))
-                        setTextEditTextById(R.id.expire, list.get(i).getValue());
+                    if (list.get(i).getName().equals("LOT")) {
+                        editText = setTextEditTextById(R.id.LOT, list.get(i).getValue());
+                        editText.setEnabled(false);
+                    }
+                    if (list.get(i).getName().equals("expire")) {
+                        editText = setTextEditTextById(R.id.expire, list.get(i).getValue());
+                        editText.setEnabled(false);
+                    }
                 }
                 break;
             case "EAN13":
                 this.barcodeStr = barcodeStr;
-                setTextEditTextById(R.id.product_barcode_primary, barcodeStr);
-                if(progressDialog!=null && progressDialog.isShowing())
+                editText = setTextEditTextById(R.id.product_barcode_primary, barcodeStr);
+                editText.setEnabled(false);
+                if (progressDialog != null && progressDialog.isShowing())
                     return;
                 searchProductByCode();
                 break;
             case "hospital-P":
                 this.barcodeStr = barcodeStr.split("\\*")[0];
-                setTextEditTextById(R.id.hospital_barcode_primary, barcodeStr.split("\\*")[0]);
-                setTextEditTextById(R.id.LOT, barcodeStr.split("\\*")[1]);
-                if(progressDialog!=null && progressDialog.isShowing())
+                editText = setTextEditTextById(R.id.hospital_barcode_primary, barcodeStr.split("\\*")[0]);
+                editText.setEnabled(false);
+                editText = setTextEditTextById(R.id.LOT, barcodeStr.split("\\*")[1]);
+                editText.setEnabled(false);
+                if (progressDialog != null && progressDialog.isShowing())
                     return;
                 searchProductByCode();
                 break;
 
             case "hospital-S":
                 this.barcodeStr = barcodeStr.split("\\*")[0];
-                setTextEditTextById(R.id.expire, barcodeStr.split("\\*")[0]);
+                editText = setTextEditTextById(R.id.expire, barcodeStr.split("\\*")[0]);
+                editText.setEnabled(false);
+                searchProductByCode();
                 break;
         }
 
@@ -292,8 +318,7 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
                                 setTextEditTextById(R.id.supplier_name, "supplier_name", currentOrder);
 
                                 JSONArray qualified = currentOrder.getJSONArray("qualified");
-                                if(qualified.length()>0)
-                                {
+                                if (qualified.length() > 0) {
                                     JSONObject qualifyDetial = qualified.getJSONObject(0);
                                     setTextEditTextById(R.id.LOT, "LOT", qualifyDetial);
                                     setTextEditTextById(R.id.expire, "expire", qualifyDetial);
@@ -359,10 +384,9 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
     };
 
     private void searchProductByCode() {
-        if(!CheckNetWorkUtils.updateConnectedFlags(MyApplication.myApplication))
-        {
+        if (!CheckNetWorkUtils.updateConnectedFlags(MyApplication.myApplication)) {
             ToastUtil.showLongToast(MyApplication.myApplication, "网络不可用");
-            return ;
+            return;
         }
         progressDialog = ProgressDialog.show(this.getContext(), // context
                 "", // title
@@ -382,10 +406,9 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
     }
 
     private void instock() {
-        if(!CheckNetWorkUtils.updateConnectedFlags(MyApplication.myApplication))
-        {
+        if (!CheckNetWorkUtils.updateConnectedFlags(MyApplication.myApplication)) {
             ToastUtil.showLongToast(MyApplication.myApplication, "网络不可用");
-            return ;
+            return;
         }
         try {
             EditText dispatchedEdit = (EditText) root.findViewById(R.id.dispatched_qty);
@@ -436,8 +459,7 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
                     }
                     String remain_qty = (ordered_qty - qualifiedInt) + "";
                     String qualified_rowid = "";
-                    if(qualified.length()>0)
-                    {
+                    if (qualified.length() > 0) {
                         JSONObject qualifyDetial = qualified.getJSONObject(0);
                         qualified_rowid = qualifyDetial.getString("qualified_rowid");
                     }
