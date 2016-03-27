@@ -2,7 +2,6 @@ package com.lichao.scancode.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebChromeClient;
@@ -17,6 +16,8 @@ import com.lichao.scancode.MyApplication;
 import com.lichao.scancode.R;
 import com.lichao.scancode.dao.OrderDetailDAO;
 import com.lichao.scancode.http.HttpUtil;
+import com.lichao.scancode.util.CheckNetWorkUtils;
+import com.lichao.scancode.util.ToastUtil;
 
 public class OrderDetailActivity extends BaseActivity {
     private String id;
@@ -53,6 +54,13 @@ public class OrderDetailActivity extends BaseActivity {
         tabSpec2.setContent(R.id.tabqualified);
         tabSpec2.setIndicator("Qualified");
         mTabHost.addTab(tabSpec2);
+
+        if(!CheckNetWorkUtils.updateConnectedFlags(MyApplication.myApplication))
+        {
+            ToastUtil.showLongToast(MyApplication.myApplication, "网络不可用");
+            return ;
+        }
+
 
         webView1 = (WebView) findViewById(R.id.web1);
         webView1.setWebViewClient(new WebViewClient() {

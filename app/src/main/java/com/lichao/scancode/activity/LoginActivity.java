@@ -40,6 +40,7 @@ public class LoginActivity extends BaseActivity {
         login.setOnClickListener(this);
         dao = new LoginDAO();
 
+
     }
 
     Handler handler = new Handler() {
@@ -102,7 +103,7 @@ public class LoginActivity extends BaseActivity {
                 msg.sendToTarget();
             }
         }.start();
-        ;
+
     }
 
     @Override

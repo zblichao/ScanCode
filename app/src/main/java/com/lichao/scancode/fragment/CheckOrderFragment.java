@@ -64,6 +64,7 @@ public class CheckOrderFragment extends Fragment {
         });
         dao = new CheckOrderFragmentDAO();
         //getOrders();
+
         return root;
     }
 
