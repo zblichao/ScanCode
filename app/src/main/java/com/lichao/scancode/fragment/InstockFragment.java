@@ -269,7 +269,7 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
                 this.barcodeStr = barcodeStr.split("\\*")[0];
                 editText = setTextEditTextById(R.id.expire, barcodeStr.split("\\*")[0]);
                 editText.setEnabled(false);
-                searchProductByCode();
+
                 break;
         }
 
