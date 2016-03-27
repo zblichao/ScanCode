@@ -114,6 +114,8 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
                     }
 
                     startActivity(intent);
+                }else {
+                    ToastUtil.showShortToast(getContext(),"请扫码并选择订单");
                 }
             }
         });

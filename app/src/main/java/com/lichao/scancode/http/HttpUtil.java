@@ -46,7 +46,7 @@ public class HttpUtil {
         //application/x-javascript text/xml->xml数据 application/x-javascript->json对象 application/x-www-form-urlencoded->表单数据
        // conn.setRequestProperty("Content-Type", "text/plain; charset=" + encoding);
        // conn.setRequestProperty("Content-Length", String.valueOf(data.length));
-        //conn.setConnectTimeout(5 * 1000);
+        conn.setConnectTimeout(5 * 1000);
         OutputStream outStream = conn.getOutputStream();
         outStream.write(data);
         outStream.flush();
