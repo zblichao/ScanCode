@@ -286,7 +286,6 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
                 editText.setEnabled(false);
                 editText = setTextEditTextById(R.id.expire, barcodeStr.split("\\*")[0]);
                 editText.setEnabled(false);
-
                 break;
         }
 

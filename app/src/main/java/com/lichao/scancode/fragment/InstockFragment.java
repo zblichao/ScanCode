@@ -329,7 +329,7 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
                             ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.list_item, R.id.text);
                             ;
                             for (int i = 0; i < jsonOrders.length(); i++) {
-                                adapter.add(jsonArray.getJSONObject(i).getString("name"));
+                                adapter.add(jsonOrders.getJSONObject(i).getString("order_name"));
                             }
                             orders.setAdapter(adapter);
                             if (jsonOrders.length() > 0) {
@@ -513,7 +513,7 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
     }
 
     private EditText setTextEditTextById(int id, String text) {
-        if (text == null || text.equals("null") || text.equals(""))
+        if (text == null || text.equals("null"))
             return null;
         EditText editText = (EditText) root.findViewById(id);
         editText.setText(text);
