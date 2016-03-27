@@ -239,6 +239,7 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
 
             case "hospital-S":
                 this.barcodeStr = barcodeStr.split("\\*")[0];
+                setTextEditTextById(R.id.hospital_barcode_secondary, barcodeStr);
                 setTextEditTextById(R.id.expire, barcodeStr.split("\\*")[0]);
                 break;
         }
