@@ -9,6 +9,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.Selection;
+import android.text.Spannable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -120,8 +122,8 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
                         e.printStackTrace();
                     }
                     startActivity(intent);
-                }else {
-                    ToastUtil.showShortToast(getContext(),"请扫码并选择订单");
+                } else {
+                    ToastUtil.showShortToast(getContext(), "请扫码并选择订单");
                 }
             }
         });
@@ -166,7 +168,7 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
             chooseWarehouse.setText("选择仓库");
             setTextEditTextById(R.id.order_qty, "");
             setTextEditTextById(R.id.qualified_qty, "");
-            currentOrder=null;
+            currentOrder = null;
         }
     }
 
@@ -201,19 +203,17 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
                 break;
             case "code128-S":
                 this.barcodeStr = barcodeStr;
-                editText =  setTextEditTextById(R.id.product_barcode_secondary, barcodeStr);
+                editText = setTextEditTextById(R.id.product_barcode_secondary, barcodeStr);
                 editText.setEnabled(false);
                 try {
                     list = ean128Parser.parseBarcodeToList(barcodeStr);
                     for (int i = 0; i < list.size(); i++) {
-                        if (list.get(i).getName().equals("LOT"))
-                        {
-                            editText =   setTextEditTextById(R.id.LOT, list.get(i).getValue());
+                        if (list.get(i).getName().equals("LOT")) {
+                            editText = setTextEditTextById(R.id.LOT, list.get(i).getValue());
                             editText.setEnabled(false);
                         }
-                        if (list.get(i).getName().equals("expire"))
-                        {
-                            editText =  setTextEditTextById(R.id.expire, list.get(i).getValue());
+                        if (list.get(i).getName().equals("expire")) {
+                            editText = setTextEditTextById(R.id.expire, list.get(i).getValue());
                             editText.setEnabled(false);
                         }
                     }
@@ -290,7 +290,7 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
                 this.barcodeStr = barcodeStr.split("\\*")[0];
                 editText = setTextEditTextById(R.id.expire, barcodeStr.split("\\*")[0]);
                 editText.setEnabled(false);
-                editText =setTextEditTextById(R.id.product_barcode_secondary, barcodeStr);
+                editText = setTextEditTextById(R.id.product_barcode_secondary, barcodeStr);
                 editText.setEnabled(false);
                 break;
         }
@@ -358,8 +358,12 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
                                     dispatched_qty += dispatched.getJSONObject(i).getInt("qty");
                                 }
 
-                                setTextEditTextById(R.id.dispatched_qty, (qualified_qty - dispatched_qty) + "");
-
+                                EditText editText = setTextEditTextById(R.id.dispatched_qty, (qualified_qty - dispatched_qty) + "");
+                                CharSequence text = editText.getText();
+                                if (text instanceof Spannable) {
+                                    Spannable spanText = (Spannable) text;
+                                    Selection.setSelection(spanText, text.length());
+                                }
                             }
 
 
@@ -393,7 +397,7 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
                             chooseWarehouse.setText("选择仓库");
                             setTextEditTextById(R.id.order_qty, "");
                             setTextEditTextById(R.id.qualified_qty, "");
-                            currentOrder=null;
+                            currentOrder = null;
                         } else {
                             ToastUtil.showLongToast(getContext(), "提交服务器失败");
                         }
