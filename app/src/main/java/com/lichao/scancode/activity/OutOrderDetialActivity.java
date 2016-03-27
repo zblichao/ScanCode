@@ -245,7 +245,9 @@ public class OutOrderDetialActivity extends BaseActivity {
                         for (int i = 0; i < list.size(); i++) {
                             if (list.get(i).getName().equals("LOT")) {
                                 OutOrderDetialActivity.this.lot = list.get(i).getValue();
-                                setTextById(R.id.LOT, list.get(i).getValue());
+                                {
+                                    setTextById(R.id.LOT, list.get(i).getValue());
+                                }
                             }
                             if (list.get(i).getName().equals("expire")) {
                                 OutOrderDetialActivity.this.expire = list.get(i).getValue();
