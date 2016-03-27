@@ -54,7 +54,7 @@ public class OrderDetailActivity extends BaseActivity {
         tabSpec2.setContent(R.id.tabqualified);
         tabSpec2.setIndicator("Qualified");
         mTabHost.addTab(tabSpec2);
-
+        mTabHost.setCurrentTabByTag("Qualified");
         if(!CheckNetWorkUtils.updateConnectedFlags(MyApplication.myApplication))
         {
             ToastUtil.showLongToast(MyApplication.myApplication, "网络不可用");

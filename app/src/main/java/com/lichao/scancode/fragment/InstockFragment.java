@@ -374,7 +374,7 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
                     if (progressDialog != null && progressDialog.isShowing())
                         progressDialog.dismiss();
 
-                    ToastUtil.showShortToast(getContext(),res);
+                    ToastUtil.showShortToast(getContext(),res );
                     try {
                         JSONObject jsonObject = new JSONObject(res);
                         if (jsonObject.getBoolean("dispatch")) {
