@@ -69,10 +69,7 @@ public class OutOrderDetialActivity extends BaseActivity {
         dao = new OutOrderDetialDAO();
         getOrders();
         showDialog_Layout(this);
-//        barcodeStr = "SPH00002159";
-//        expire = "1707136";
-//        lot = "2018/07/01";
-        // getProductInfo();
+
     }
 
 
@@ -214,6 +211,9 @@ public class OutOrderDetialActivity extends BaseActivity {
         if(alertDialog!=null&&alertDialog.isShowing())
             return;
         alertDialog.show();
+
+        EditText num = (EditText) alertDialog.findViewById(R.id.num);
+        num.requestFocus();
         new Thread() {
             @Override
             public void run() {
