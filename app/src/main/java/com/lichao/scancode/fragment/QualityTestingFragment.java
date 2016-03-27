@@ -159,7 +159,7 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
 
     @Override
     public void onReceiveBarcode(String type, String barcodeStr) {
-//        ToastUtil.showShortToast(MyApplication.myApplication, type + ":" + barcodeStr);
+        ToastUtil.showShortToast(MyApplication.myApplication, type + ":" + barcodeStr);
 
         ArrayList<NameValuePair> list;
         EditText editText;
@@ -239,6 +239,7 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
 
             case "hospital-S":
                 this.barcodeStr = barcodeStr.split("\\*")[0];
+                setTextEditTextById(R.id.hospital_barcode_secondary, barcodeStr);
                 setTextEditTextById(R.id.expire, barcodeStr.split("\\*")[0]);
                 break;
         }
