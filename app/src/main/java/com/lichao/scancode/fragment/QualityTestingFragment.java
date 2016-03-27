@@ -142,6 +142,23 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
             imm.hideSoftInputFromWindow(root.getWindowToken(), 0);
             EditText qualified_qty = (EditText) root.findViewById(R.id.qualified_qty);
             qualified_qty.requestFocus();
+            setTextEditTextById(R.id.product_barcode_primary, "");
+            setTextEditTextById(R.id.product_barcode_secondary, "");
+            setTextEditTextById(R.id.hospital_barcode_primary, "");
+            setTextEditTextById(R.id.hospital_barcode_secondary, "");
+            setTextEditTextById(R.id.product_name, "");
+            setTextEditTextById(R.id.product_huohao, "");
+            setTextEditTextById(R.id.product_fdacode, "");
+            setTextEditTextById(R.id.product_fdaexpire, "");
+            setTextEditTextById(R.id.product_size, "");
+            setTextEditTextById(R.id.supplier_name, "");
+            setTextEditTextById(R.id.LOT, "");
+            setTextEditTextById(R.id.expire, "");
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.list_item, R.id.text);
+            orders.setAdapter(adapter);
+            chooseWarehouse.setText("选择仓库");
+            setTextEditTextById(R.id.order_qty, "");
+            setTextEditTextById(R.id.qualified_qty, "");
         }
     }
 
