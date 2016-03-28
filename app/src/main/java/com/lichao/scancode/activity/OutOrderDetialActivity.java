@@ -235,10 +235,9 @@ public class OutOrderDetialActivity extends BaseActivity {
             switch (type) {
                 case "code128-P":
                     OutOrderDetialActivity.this.barcodeStr = barcodeStr;
-
                     break;
                 case "code128-S":
-                    OutOrderDetialActivity.this.barcodeStr = barcodeStr;
+//                    OutOrderDetialActivity.this.barcodeStr = barcodeStr;
 
                     try {
                         list = ean128Parser.parseBarcodeToList(barcodeStr);
@@ -261,16 +260,20 @@ public class OutOrderDetialActivity extends BaseActivity {
                 case "code128":
                     OutOrderDetialActivity.this.barcodeStr = barcodeStr.substring(0, 16);
 
-                    list = hibcParser.HIBCSecondaryParser(barcodeStr.substring(16));
-                    for (int i = 0; i < list.size(); i++) {
-                        if (list.get(i).getName().equals("LOT")) {
-                            OutOrderDetialActivity.this.lot = list.get(i).getValue();
-                            setTextById(R.id.LOT, list.get(i).getValue());
+                    try {
+                        list = ean128Parser.parseBarcodeToList(barcodeStr.substring(16));
+                        for (int i = 0; i < list.size(); i++) {
+                            if (list.get(i).getName().equals("LOT")) {
+                                OutOrderDetialActivity.this.lot = list.get(i).getValue();
+                                setTextById(R.id.LOT, list.get(i).getValue());
+                            }
+                            if (list.get(i).getName().equals("expire")) {
+                                OutOrderDetialActivity.this.expire = list.get(i).getValue();
+                                setTextById(R.id.date, list.get(i).getValue());
+                            }
                         }
-                        if (list.get(i).getName().equals("expire")) {
-                            OutOrderDetialActivity.this.expire = list.get(i).getValue();
-                            setTextById(R.id.date, list.get(i).getValue());
-                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                     break;
                 case "HIBC-P":
@@ -278,7 +281,7 @@ public class OutOrderDetialActivity extends BaseActivity {
 
                     break;
                 case "HIBC-S":
-                    OutOrderDetialActivity.this.barcodeStr = barcodeStr;
+//                    OutOrderDetialActivity.this.barcodeStr = barcodeStr;
                     list = hibcParser.HIBCSecondaryParser(barcodeStr);
                     for (int i = 0; i < list.size(); i++) {
                         if (list.get(i).getName().equals("LOT")) {
@@ -296,12 +299,11 @@ public class OutOrderDetialActivity extends BaseActivity {
 
                 case "hospital-P":
                     OutOrderDetialActivity.this.barcodeStr = barcodeStr.split("\\*")[0];
-                    OutOrderDetialActivity.this.expire = barcodeStr.split("\\*")[0];
                     OutOrderDetialActivity.this.lot = barcodeStr.split("\\*")[1];
                     break;
 
                 case "hospital-S":
-                    OutOrderDetialActivity.this.barcodeStr = barcodeStr.split("\\*")[0];
+//                    OutOrderDetialActivity.this.barcodeStr = barcodeStr.split("\\*")[0];
                     OutOrderDetialActivity.this.expire = barcodeStr.split("\\*")[0];
                     break;
             }
