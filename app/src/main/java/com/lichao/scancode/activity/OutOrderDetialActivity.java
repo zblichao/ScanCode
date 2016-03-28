@@ -235,6 +235,8 @@ public class OutOrderDetialActivity extends BaseActivity {
             switch (type) {
                 case "code128-P":
                     OutOrderDetialActivity.this.barcodeStr = barcodeStr;
+                    OutOrderDetialActivity.this.lot = "";
+                    OutOrderDetialActivity.this.expire = "";
                     break;
                 case "code128-S":
 //                    OutOrderDetialActivity.this.barcodeStr = barcodeStr;
@@ -278,7 +280,8 @@ public class OutOrderDetialActivity extends BaseActivity {
                     break;
                 case "HIBC-P":
                     OutOrderDetialActivity.this.barcodeStr = barcodeStr;
-
+                    OutOrderDetialActivity.this.lot = "";
+                    OutOrderDetialActivity.this.expire = "";
                     break;
                 case "HIBC-S":
 //                    OutOrderDetialActivity.this.barcodeStr = barcodeStr;
@@ -300,6 +303,7 @@ public class OutOrderDetialActivity extends BaseActivity {
                 case "hospital-P":
                     OutOrderDetialActivity.this.barcodeStr = barcodeStr.split("\\*")[0];
                     OutOrderDetialActivity.this.lot = barcodeStr.split("\\*")[1];
+                    OutOrderDetialActivity.this.expire = "";
                     break;
 
                 case "hospital-S":
