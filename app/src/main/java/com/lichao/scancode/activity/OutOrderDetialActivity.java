@@ -293,6 +293,7 @@ public class OutOrderDetialActivity extends BaseActivity {
                     break;
                 case "EAN13":
                     break;
+
                 case "hospital-P":
                     OutOrderDetialActivity.this.barcodeStr = barcodeStr.split("\\*")[0];
                     OutOrderDetialActivity.this.expire = barcodeStr.split("\\*")[0];
