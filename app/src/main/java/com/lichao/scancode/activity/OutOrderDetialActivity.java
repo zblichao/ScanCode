@@ -94,7 +94,9 @@ public class OutOrderDetialActivity extends BaseActivity {
                         JSONObject json = new JSONObject(resProduct);
                         setTextById(json, R.id.productName, "product_name");
                         setTextById(json, R.id.productSize, "product_size");
-
+                        barcodeStr="";
+                        lot="";
+                        expire="";
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -208,23 +210,24 @@ public class OutOrderDetialActivity extends BaseActivity {
 
 
     private void getProductInfo() {
-        if(alertDialog!=null&&alertDialog.isShowing())
-            return;
-        alertDialog.show();
+        if (barcodeStr != null && !barcodeStr.equals("") && lot != null && !lot.equals("") && expire != null && !expire.equals("")) {
+            if (alertDialog != null && alertDialog.isShowing())
+                return;
+            alertDialog.show();
 
-        EditText num = (EditText) alertDialog.findViewById(R.id.num);
-        num.requestFocus();
-        new Thread() {
-            @Override
-            public void run() {
-                super.run();
-                resProduct = dao.getProductInfo(barcodeStr, lot, expire);
-                Message msg = handler.obtainMessage();
-                msg.arg1 = 2;
-                msg.sendToTarget();
-            }
-        }.start();
-
+            EditText num = (EditText) alertDialog.findViewById(R.id.num);
+            num.requestFocus();
+            new Thread() {
+                @Override
+                public void run() {
+                    super.run();
+                    resProduct = dao.getProductInfo(barcodeStr, lot, expire);
+                    Message msg = handler.obtainMessage();
+                    msg.arg1 = 2;
+                    msg.sendToTarget();
+                }
+            }.start();
+        }
     }
 
     private ScanBroadcastReceiver scanBroadcastReceiver = new ScanBroadcastReceiver() {
