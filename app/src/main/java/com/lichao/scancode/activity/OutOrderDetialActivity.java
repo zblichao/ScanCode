@@ -235,6 +235,7 @@ public class OutOrderDetialActivity extends BaseActivity {
         public void onReceiveBarcode(String type, String barcodeStr) {
             ArrayList<NameValuePair> list;
             EditText editText;
+            ToastUtil.showShortToast(getApplicationContext(),barcodeStr);
             switch (type) {
                 case "code128-P":
                     OutOrderDetialActivity.this.barcodeStr = barcodeStr;
