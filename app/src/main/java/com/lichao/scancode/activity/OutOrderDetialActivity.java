@@ -11,6 +11,7 @@ import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
@@ -27,6 +28,7 @@ import com.lichao.scancode.util.CheckNetWorkUtils;
 import com.lichao.scancode.util.JSONHelper;
 import com.lichao.scancode.util.ToastUtil;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -38,6 +40,7 @@ public class OutOrderDetialActivity extends BaseActivity {
     private ExpandableListView list;
     private OutOrderDetialAdapter adapter;
     private OutOrderDetialDAO dao;
+    private String warehouseId;
     private String id;
     private String res;
     private String resProduct;
@@ -49,6 +52,8 @@ public class OutOrderDetialActivity extends BaseActivity {
     private EAN128Parser ean128Parser = new EAN128Parser(); // 你看看放哪儿合适，我一般放在onCreate
     private HIBCParser hibcParser = new HIBCParser();
     private AlertDialog alertDialog;
+    private Button chooseWarehouse;
+    private String stock;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +64,8 @@ public class OutOrderDetialActivity extends BaseActivity {
         LayoutInflater inflater = LayoutInflater.from(this);
         windowOut = inflater.inflate(
                 R.layout.window_out, null);
+        chooseWarehouse = (Button) windowOut.findViewById(R.id.chooseWarehouse);
+        chooseWarehouse.setOnClickListener(this);
         list = (ExpandableListView) findViewById(R.id.list);
         adapter = new OutOrderDetialAdapter(this);
         list.setAdapter(adapter);
@@ -94,11 +101,19 @@ public class OutOrderDetialActivity extends BaseActivity {
                         JSONObject json = new JSONObject(resProduct);
                         setTextById(json, R.id.productName, "product_name");
                         setTextById(json, R.id.productSize, "product_size");
-                        setTextById(json, R.id.LOT, "LOT");
-                        setTextById(json, R.id.expire, "expire");
-                        barcodeStr="";
-                        lot="";
-                        expire="";
+                        JSONArray stockArray = json.getJSONArray("stock");
+                        if (stockArray.length() > 0) {
+                            JSONObject tempjson = stockArray.getJSONObject(0);
+                            setTextById(tempjson, R.id.LOT, "LOT");
+                            setTextById(tempjson, R.id.expire, "expire");
+                            setTextById(tempjson, R.id.textqty, "qty");
+                            setTextById(tempjson, R.id.chooseWarehouse, "warehouse_name");
+                            warehouseId = tempjson.getString("warehouse_id");
+
+                        }
+                        barcodeStr = "";
+                        lot = "";
+                        expire = "";
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -106,15 +121,14 @@ public class OutOrderDetialActivity extends BaseActivity {
                 case 3:
                     if (progressDialog != null && progressDialog.isShowing())
                         progressDialog.dismiss();
-                    if (alertDialog != null && alertDialog.isShowing())
-                    {
+                    if (alertDialog != null && alertDialog.isShowing()) {
 
                         alertDialog.dismiss();
                         setTextById(R.id.productName, "");
-                        setTextById( R.id.productSize, "");
-                        setTextById( R.id.LOT, "");
-                        setTextById( R.id.date, "");
-                        setTextById( R.id.num, "");
+                        setTextById(R.id.productSize, "");
+                        setTextById(R.id.LOT, "");
+                        setTextById(R.id.date, "");
+                        setTextById(R.id.num, "");
                     }
                     ToastUtil.showLongToast(getApplicationContext(), resOut);
                     break;
@@ -140,10 +154,9 @@ public class OutOrderDetialActivity extends BaseActivity {
     }
 
     private void getOrders() {
-        if(!CheckNetWorkUtils.updateConnectedFlags(MyApplication.myApplication))
-        {
+        if (!CheckNetWorkUtils.updateConnectedFlags(MyApplication.myApplication)) {
             ToastUtil.showLongToast(MyApplication.myApplication, "网络不可用");
-            return ;
+            return;
         }
         progressDialog = ProgressDialog.show(OutOrderDetialActivity.this, // context
                 "", // title
@@ -168,9 +181,9 @@ public class OutOrderDetialActivity extends BaseActivity {
 
         TextView lotText = (TextView) windowOut.findViewById(R.id.LOT);
         final String lot = lotText.getText().toString();
-        TextView expireText = (TextView)windowOut. findViewById(R.id.date);
+        TextView expireText = (TextView) windowOut.findViewById(R.id.date);
         final String expire = expireText.getText().toString();
-        TextView qtyText = (TextView)windowOut. findViewById(R.id.num);
+        TextView qtyText = (TextView) windowOut.findViewById(R.id.num);
         final String qty = qtyText.getText().toString();
         progressDialog = ProgressDialog.show(OutOrderDetialActivity.this, // context
                 "", // title
@@ -331,9 +344,35 @@ public class OutOrderDetialActivity extends BaseActivity {
 
     @Override
     public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.chooseWarehouse:
+                Intent intent = new Intent(OutOrderDetialActivity.this, ChooseWareHouseActivity.class);
+                intent.putExtra("data", stock);
+                startActivityForResult(intent, 1);
+                break;
 
+        }
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case 1:
+                if (data != null) {
+                    String WarehouseName = data.getStringExtra("warehouseName");
+                    warehouseId = data.getStringExtra("warehouseId");
+                    String LOT = data.getStringExtra("LOT");
+                    String expire = data.getStringExtra("expire");
+                    String qty = data.getStringExtra("qty");
+                    setTextById(R.id.LOT, LOT);
+                    setTextById(R.id.expire, expire);
+                    setTextById(R.id.textqty, qty);
+                    setTextById(R.id.chooseWarehouse, WarehouseName);
+                }
+                break;
+        }
+    }
 
     private void showDialog_Layout(Context context) {
 
