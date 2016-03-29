@@ -108,6 +108,7 @@ public class OutOrderDetialActivity extends BaseActivity {
                         progressDialog.dismiss();
                     if (alertDialog != null && alertDialog.isShowing())
                     {
+
                         alertDialog.dismiss();
                         setTextById(R.id.productName, "");
                         setTextById( R.id.productSize, "");
