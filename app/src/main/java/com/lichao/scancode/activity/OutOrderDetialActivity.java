@@ -91,9 +91,12 @@ public class OutOrderDetialActivity extends BaseActivity {
                     break;
                 case 2:
                     try {
+                        System.out.println(resProduct);
                         JSONObject json = new JSONObject(resProduct);
                         setTextById(json, R.id.productName, "product_name");
                         setTextById(json, R.id.productSize, "product_size");
+                        setTextById(json, R.id.LOT, "LOT");
+                        setTextById(json, R.id.expire, "expire");
                         barcodeStr="";
                         lot="";
                         expire="";
@@ -121,9 +124,9 @@ public class OutOrderDetialActivity extends BaseActivity {
     };
 
     private TextView setTextById(JSONObject json, int id, String key) {
-        TextView textView = (TextView) windowOut.findViewById(R.id.productName);
+        TextView textView = (TextView) windowOut.findViewById(id);
         try {
-            textView.setText(json.getString("product_name"));
+            textView.setText(json.getString(key));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -131,7 +134,7 @@ public class OutOrderDetialActivity extends BaseActivity {
     }
 
     private TextView setTextById(int id, String value) {
-        TextView textView = (TextView) windowOut.findViewById(R.id.productName);
+        TextView textView = (TextView) windowOut.findViewById(id);
         textView.setText(value);
         return textView;
     }
@@ -210,7 +213,8 @@ public class OutOrderDetialActivity extends BaseActivity {
 
 
     private void getProductInfo() {
-        if (barcodeStr != null && !barcodeStr.equals("") && lot != null && !lot.equals("") && expire != null && !expire.equals("")) {
+        if (barcodeStr != null && !barcodeStr.equals("")) {
+//        if (barcodeStr != null && !barcodeStr.equals("") && lot != null && !lot.equals("") && expire != null && !expire.equals("")) {
             if (alertDialog != null && alertDialog.isShowing())
                 return;
             alertDialog.show();
