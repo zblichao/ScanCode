@@ -243,8 +243,8 @@ public class OutOrderDetialActivity extends BaseActivity {
                     String orderId = id;
                     String customerId = resProduct;
                     String productId = jsonObject.getString("product_id");
-                    String originStock = jsonObject.getString("");
-                    String detRowId = jsonObject.getString("");
+                    String originStock="";
+                    String detRowId = "";
                     for (JSONObject j : temp) {
                         if (productId != null && productId.equals(j.getString("product_id"))) {
                             originStock = j.getString("origin_stock");
