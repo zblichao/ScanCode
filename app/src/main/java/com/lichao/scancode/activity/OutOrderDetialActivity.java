@@ -11,9 +11,12 @@ import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.lichao.scancode.MyApplication;
@@ -54,6 +57,8 @@ public class OutOrderDetialActivity extends BaseActivity {
     private AlertDialog alertDialog;
     private Button chooseWarehouse;
     private String stock;
+    private Spinner warehouse;
+    private JSONArray stockArray;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,19 +69,44 @@ public class OutOrderDetialActivity extends BaseActivity {
         LayoutInflater inflater = LayoutInflater.from(this);
         windowOut = inflater.inflate(
                 R.layout.window_out, null);
-        chooseWarehouse = (Button) windowOut.findViewById(R.id.chooseWarehouse);
-        chooseWarehouse.setOnClickListener(this);
+        warehouse = (Spinner) windowOut.findViewById(R.id.warehouse);
+        warehouse.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                try {
+                    JSONObject tempjson = stockArray.getJSONObject(position);
+                    setTextById(tempjson, R.id.LOT, "LOT");
+                    setTextById(tempjson, R.id.expire, "expire");
+                    setTextById(tempjson, R.id.textqty, "qty");
+
+                    warehouseId = tempjson.getString("warehouse_id");
+                } catch (Exception e) {
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+
+
+        });
         list = (ExpandableListView) findViewById(R.id.list);
         adapter = new OutOrderDetialAdapter(this);
         list.setAdapter(adapter);
         IntentFilter filter = new IntentFilter();
         filter.addAction(MainActivity.SCAN_ACTION);
         registerReceiver(scanBroadcastReceiver, filter);
-        scanBroadcastReceiver.initScanManger();
+        //scanBroadcastReceiver.initScanManger();
         dao = new OutOrderDetialDAO();
         getOrders();
         showDialog_Layout(this);
-
+//        barcodeStr = "SPH00002159";
+//        lot = "35R0902";
+//        expire = "2018/09/02";
+//        getProductInfo();
     }
 
 
@@ -101,13 +131,21 @@ public class OutOrderDetialActivity extends BaseActivity {
                         JSONObject json = new JSONObject(resProduct);
                         setTextById(json, R.id.productName, "product_name");
                         setTextById(json, R.id.productSize, "product_size");
-                        JSONArray stockArray = json.getJSONArray("stock");
-                        if (stockArray.length() > 0) {
+                        stockArray = json.getJSONArray("stock");
+                        if (stockArray != null && stockArray.length() > 0) {
+
+                            ArrayAdapter<String> adapter = new ArrayAdapter<String>(OutOrderDetialActivity.this, R.layout.list_item, R.id.text);
+                            ;
+                            for (int i = 0; i < stockArray.length(); i++) {
+                                adapter.add(stockArray.getJSONObject(i).getString("warehouse_name"));
+                            }
+                            warehouse.setAdapter(adapter);
+
                             JSONObject tempjson = stockArray.getJSONObject(0);
                             setTextById(tempjson, R.id.LOT, "LOT");
                             setTextById(tempjson, R.id.expire, "expire");
                             setTextById(tempjson, R.id.textqty, "qty");
-                            setTextById(tempjson, R.id.chooseWarehouse, "warehouse_name");
+
                             warehouseId = tempjson.getString("warehouse_id");
 
                         }
@@ -138,9 +176,9 @@ public class OutOrderDetialActivity extends BaseActivity {
     };
 
     private TextView setTextById(JSONObject json, int id, String key) {
-        TextView textView = (TextView) windowOut.findViewById(R.id.productName);
+        TextView textView = (TextView) windowOut.findViewById(id);
         try {
-            textView.setText(json.getString("product_name"));
+            textView.setText(json.getString(key));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -148,7 +186,7 @@ public class OutOrderDetialActivity extends BaseActivity {
     }
 
     private TextView setTextById(int id, String value) {
-        TextView textView = (TextView) windowOut.findViewById(R.id.productName);
+        TextView textView = (TextView) windowOut.findViewById(id);
         textView.setText(value);
         return textView;
     }
