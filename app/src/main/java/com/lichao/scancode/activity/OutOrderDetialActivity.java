@@ -51,6 +51,7 @@ public class OutOrderDetialActivity extends BaseActivity {
     private String barcodeStr;
     private String lot;
     private String expire;
+    private String originStock ;
     private View windowOut;
     private EAN128Parser ean128Parser = new EAN128Parser(); // 你看看放哪儿合适，我一般放在onCreate
     private HIBCParser hibcParser = new HIBCParser();
@@ -82,6 +83,7 @@ public class OutOrderDetialActivity extends BaseActivity {
                     setTextById(tempjson, R.id.textqty, "qty");
                     lot = tempjson.getString("LOT");
                     expire = tempjson.getString("expire");
+                    originStock=tempjson.getString("origin_stock");
                     warehouseId = tempjson.getString("warehouse_id");
                 } catch (Exception e) {
                 }
@@ -150,7 +152,7 @@ public class OutOrderDetialActivity extends BaseActivity {
                             setTextById(tempjson, R.id.textqty, "qty");
                             lot = tempjson.getString("LOT");
                             expire = tempjson.getString("expire");
-
+                            originStock=tempjson.getString("origin_stock");
                             warehouseId = tempjson.getString("warehouse_id");
 
                         }
@@ -243,11 +245,11 @@ public class OutOrderDetialActivity extends BaseActivity {
                     String orderId = id;
                     String customerId = resProduct;
                     String productId = jsonObject.getString("product_id");
-                    String originStock="";
+
                     String detRowId = "";
                     for (JSONObject j : temp) {
                         if (productId != null && productId.equals(j.getString("product_id"))) {
-                            originStock = j.getString("origin_stock");
+
                             detRowId = j.getString("det_rowid");
                             customerId = j.getString("customer_id");
                         }
