@@ -224,7 +224,7 @@ public class OutOrderDetialActivity extends BaseActivity {
 
         TextView lotText = (TextView) windowOut.findViewById(R.id.LOT);
         final String lot = lotText.getText().toString();
-        TextView expireText = (TextView) windowOut.findViewById(R.id.date);
+        TextView expireText = (TextView) windowOut.findViewById(R.id.expire);
         final String expire = expireText.getText().toString();
         TextView qtyText = (TextView) windowOut.findViewById(R.id.num);
         final String qty = qtyText.getText().toString();
