@@ -250,8 +250,6 @@ public class OutOrderDetialActivity extends BaseActivity {
                         }
                     }
 
-
-                    String warehouseId = jsonObject.getString("warehouse_id");
                     resOut = dao.outOrders(orderId, customerId, qty, productId, lot, originStock, detRowId, expire, warehouseId);
                 } catch (Exception e) {
 
