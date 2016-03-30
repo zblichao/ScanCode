@@ -80,7 +80,8 @@ public class OutOrderDetialActivity extends BaseActivity {
                     setTextById(tempjson, R.id.LOT, "LOT");
                     setTextById(tempjson, R.id.expire, "expire");
                     setTextById(tempjson, R.id.textqty, "qty");
-
+                    lot = tempjson.getString("LOT");
+                    expire = tempjson.getString("expire");
                     warehouseId = tempjson.getString("warehouse_id");
                 } catch (Exception e) {
                 }
@@ -147,6 +148,8 @@ public class OutOrderDetialActivity extends BaseActivity {
                             setTextById(tempjson, R.id.LOT, "LOT");
                             setTextById(tempjson, R.id.expire, "expire");
                             setTextById(tempjson, R.id.textqty, "qty");
+                            lot = tempjson.getString("LOT");
+                            expire = tempjson.getString("expire");
 
                             warehouseId = tempjson.getString("warehouse_id");
 
