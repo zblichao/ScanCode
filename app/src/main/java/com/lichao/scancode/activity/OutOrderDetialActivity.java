@@ -45,13 +45,14 @@ public class OutOrderDetialActivity extends BaseActivity {
     private OutOrderDetialDAO dao;
     private String warehouseId;
     private String id;
+    private String customerId;
     private String res;
     private String resProduct;
     private String resOut;
     private String barcodeStr;
     private String lot;
     private String expire;
-    private String originStock ;
+    private String originStock;
     private View windowOut;
     private EAN128Parser ean128Parser = new EAN128Parser(); // 你看看放哪儿合适，我一般放在onCreate
     private HIBCParser hibcParser = new HIBCParser();
@@ -67,6 +68,7 @@ public class OutOrderDetialActivity extends BaseActivity {
         setContentView(R.layout.activity_out_order_detial);
         Intent intent = getIntent();
         id = intent.getStringExtra("order_id");
+        customerId = intent.getStringExtra("customer_id");
         LayoutInflater inflater = LayoutInflater.from(this);
         windowOut = inflater.inflate(
                 R.layout.window_out, null);
@@ -83,7 +85,7 @@ public class OutOrderDetialActivity extends BaseActivity {
                     setTextById(tempjson, R.id.textqty, "qty");
                     lot = tempjson.getString("LOT");
                     expire = tempjson.getString("expire");
-                    originStock=tempjson.getString("origin_stock");
+                    originStock = tempjson.getString("origin_stock");
                     warehouseId = tempjson.getString("warehouse_id");
                 } catch (Exception e) {
                 }
@@ -152,7 +154,7 @@ public class OutOrderDetialActivity extends BaseActivity {
                             setTextById(tempjson, R.id.textqty, "qty");
                             lot = tempjson.getString("LOT");
                             expire = tempjson.getString("expire");
-                            originStock=tempjson.getString("origin_stock");
+                            originStock = tempjson.getString("origin_stock");
                             warehouseId = tempjson.getString("warehouse_id");
 
                         }
@@ -243,15 +245,13 @@ public class OutOrderDetialActivity extends BaseActivity {
                     List<JSONObject> temp = JSONHelper.JSONArray(res);
                     JSONObject jsonObject = new JSONObject(resProduct);
                     String orderId = id;
-                    String customerId = resProduct;
+
                     String productId = jsonObject.getString("product_id");
 
                     String detRowId = "";
                     for (JSONObject j : temp) {
                         if (productId != null && productId.equals(j.getString("product_id"))) {
-
                             detRowId = j.getString("det_rowid");
-                            customerId = j.getString("customer_id");
                         }
                     }
 

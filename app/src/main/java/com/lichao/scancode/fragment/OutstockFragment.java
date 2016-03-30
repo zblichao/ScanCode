@@ -55,6 +55,7 @@ public class OutstockFragment extends Fragment    implements
                 Intent intent = new Intent(getContext(), OutOrderDetialActivity.class);
                 try {
                     intent.putExtra("order_id",order.getString("order_id"));
+                    intent.putExtra("customer_id",order.getString("customer_id"));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
