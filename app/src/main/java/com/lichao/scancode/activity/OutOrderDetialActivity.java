@@ -127,6 +127,8 @@ public class OutOrderDetialActivity extends BaseActivity {
                     }
                     break;
                 case 2:
+                    if (progressDialog != null && progressDialog.isShowing())
+                        progressDialog.dismiss();
                     try {
                         JSONObject json = new JSONObject(resProduct);
                         setTextById(json, R.id.productName, "product_name");
