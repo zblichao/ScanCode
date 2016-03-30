@@ -265,9 +265,9 @@ public class OutOrderDetialActivity extends BaseActivity {
 
     private void getProductInfo() {
         if (barcodeStr != null && !barcodeStr.equals("") && lot != null && !lot.equals("") && expire != null && !expire.equals("")) {
-            if (alertDialog != null && alertDialog.isShowing())
+            if (progressDialog != null && progressDialog.isShowing())
                 return;
-            alertDialog.show();
+            progressDialog.show();
 
             EditText num = (EditText) alertDialog.findViewById(R.id.num);
             num.requestFocus();
@@ -369,6 +369,10 @@ public class OutOrderDetialActivity extends BaseActivity {
                     break;
             }
             getProductInfo();
+            if (alertDialog != null && alertDialog.isShowing())
+                return;
+            alertDialog.show();
+
         }
     };
 
