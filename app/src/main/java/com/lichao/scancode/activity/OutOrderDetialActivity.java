@@ -99,7 +99,7 @@ public class OutOrderDetialActivity extends BaseActivity {
         IntentFilter filter = new IntentFilter();
         filter.addAction(MainActivity.SCAN_ACTION);
         registerReceiver(scanBroadcastReceiver, filter);
-        //scanBroadcastReceiver.initScanManger();
+        scanBroadcastReceiver.initScanManger();
         dao = new OutOrderDetialDAO();
         getOrders();
         showDialog_Layout(this);
