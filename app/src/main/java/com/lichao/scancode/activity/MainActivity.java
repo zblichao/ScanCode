@@ -86,6 +86,13 @@ public class MainActivity extends AppCompatActivity
 
         currentMenuItem = "质检";
 
+
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         IntentFilter filter = new IntentFilter();
         filter.addAction(SCAN_ACTION);
         registerReceiver(scanBroadcastReceiver, filter);
@@ -93,8 +100,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onPause() {
+        super.onPause();
         scanBroadcastReceiver.closeScanManager();
         unregisterReceiver(scanBroadcastReceiver);
     }
