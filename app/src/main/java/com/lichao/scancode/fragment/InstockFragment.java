@@ -163,7 +163,7 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
             setTextEditTextById(R.id.expire, "");
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.list_item, R.id.text);
             orders.setAdapter(adapter);
-            chooseWarehouse.setText("选择仓库");
+            //chooseWarehouse.setText("选择仓库");
             setTextEditTextById(R.id.order_qty, "");
             setTextEditTextById(R.id.qualified_qty, "");
             setTextEditTextById(R.id.dispatched_qty, "");
@@ -321,7 +321,17 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
                             setTextEditTextById(R.id.product_size, "product_size", jsonProduct);
                             allWarehouses = jsonRes.getString("warehouse");
                             JSONArray jsonArray = new JSONArray(allWarehouses);
-                            if (jsonArray.length() > 0) {
+                            boolean hasTheWarehouse = false;
+                            for (int i=0;i<jsonArray.length();i++)
+                            {
+                                if(warehousesId!=null&&warehousesId.equals(jsonArray.getJSONObject(i).getString("id")))
+                                {
+                                    hasTheWarehouse=true;
+                                    break;
+                                }
+                            }
+
+                            if (!hasTheWarehouse&& jsonArray.length() > 0) {
                                 chooseWarehouse.setText(jsonArray.getJSONObject(0).getString("name"));
                                 warehousesId = jsonArray.getJSONObject(0).getString("id");
                             }
