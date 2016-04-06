@@ -25,9 +25,9 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity android:name=".activity.ChooseWarehousesActivity" />
-        <activity
-            android:name=".activity.OrderDetailActivity" />
-        <activity android:name=".activity.OutOrderDetialActivity"></activity>
+        <activity android:name=".activity.OrderDetailActivity" />
+        <activity android:name=".activity.OutOrderDetialActivity" />
+        <activity android:name=".activity.ChooseWareHouseActivity"></activity>
     </application>
 
 </manifest>
