@@ -21,8 +21,8 @@ import android.widget.Spinner;
 
 import com.lichao.scancode.MyApplication;
 import com.lichao.scancode.R;
+import com.lichao.scancode.activity.ChooseDepartmentActivity;
 import com.lichao.scancode.activity.ChooseWarehousesActivity;
-import com.lichao.scancode.activity.OrderDetailActivity;
 import com.lichao.scancode.dao.DirectOutstockFragmentDAO;
 import com.lichao.scancode.entity.NameValuePair;
 import com.lichao.scancode.receiver.BarcodeReceiver;
@@ -47,15 +47,18 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
     private ProgressDialog progressDialog;
     private String res;
     private String allWarehouses;
+    private String allDepartment;
     private String barcodeStr;
     private Button chooseWarehouse;
+    private Button chooseDepartment;
     private Button confirm;
     private Button showOrder;
     private String warehousesId;
+    private String departmentId;
     private View root;
-    private Spinner orders;
-    private JSONArray jsonOrders;
-    private JSONObject currentOrder;
+    private Spinner stock;
+    private JSONArray jsonStock;
+    private JSONObject currentStock;
     private JSONObject jsonProduct;
     private EAN128Parser ean128Parser = new EAN128Parser(); // 你看看放哪儿合适，我一般放在onCreate
     private HIBCParser hibcParser = new HIBCParser();
@@ -68,28 +71,16 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_direct_outstock, container, false);
-        orders = (Spinner) root.findViewById(R.id.orders);
-        orders.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        stock = (Spinner) root.findViewById(R.id.stock);
+        stock.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (jsonOrders != null && jsonOrders.length() < position) {
+                if (jsonStock != null && jsonStock.length() > position) {
                     try {
-                        currentOrder = jsonOrders.getJSONObject(position);
-                        setTextEditTextById(R.id.order_qty, "ordered_qty", currentOrder.getJSONObject("ordered"));
-                        setTextEditTextById(R.id.supplier_name, "supplier_name", currentOrder);
-                        JSONArray qualified = currentOrder.getJSONArray("qualified");
-                        if (qualified.length() > 0) {
-                            JSONObject qualifyDetial = qualified.getJSONObject(0);
-                            setTextEditTextById(R.id.LOT, "LOT", qualifyDetial);
-                            setTextEditTextById(R.id.expire, "expire", qualifyDetial);
-                        }
-
-                        JSONArray dispatched = currentOrder.getJSONArray("dispatched");
-                        int qualified_qty = 0;
-                        for (int i = 0; i < dispatched.length(); i++) {
-                            qualified_qty += dispatched.getJSONObject(i).getInt("qty");
-                        }
-                        setTextEditTextById(R.id.qualified_qty, (currentOrder.getJSONObject("ordered").getInt("ordered_qty") - qualified_qty) + "");
+                        currentStock = jsonStock.getJSONObject(position);
+                        setTextEditTextById(R.id.expire, "expire", currentStock);
+                        setTextEditTextById(R.id.store_qty, "qty", currentStock);
+                        setTextEditTextById(R.id.out_qty, "");
 
                     } catch (Exception e) {
                     }
@@ -108,23 +99,7 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
                 instock();
             }
         });
-        showOrder = (Button) root.findViewById(R.id.show_order);
-        showOrder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (currentOrder != null) {
-                    Intent intent = new Intent(getContext(), OrderDetailActivity.class);
-                    try {
-                        intent.putExtra("id", currentOrder.getString("order_id"));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    startActivity(intent);
-                } else {
-                    ToastUtil.showShortToast(getContext(), "请扫码并选择订单");
-                }
-            }
-        });
+
         chooseWarehouse = (Button) root.findViewById(R.id.chooseWarehouse);
         chooseWarehouse.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -134,9 +109,21 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
                 startActivityForResult(intent, 1);
             }
         });
+
+        chooseDepartment = (Button) root.findViewById(R.id.chooseDepartment);
+        chooseDepartment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), ChooseDepartmentActivity.class);
+                intent.putExtra("data", allDepartment);
+                startActivityForResult(intent, 2);
+            }
+        });
         dao = new DirectOutstockFragmentDAO();
-        //getWarehouses();
-        //searchProductByCode();
+        getWarehousesAndDepartment();
+//        warehousesId="2";
+//        barcodeStr="SPH00001979";
+//        searchProductByCode();
 
         return root;
     }
@@ -146,8 +133,8 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
         if (!hidden) {
             InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(root.getWindowToken(), 0);
-            EditText dispatched_qty = (EditText) root.findViewById(R.id.dispatched_qty);
-            dispatched_qty.requestFocus();
+            EditText out_qty = (EditText) root.findViewById(R.id.out_qty);
+            out_qty.requestFocus();
 
             setTextEditTextById(R.id.product_barcode_primary, "");
             setTextEditTextById(R.id.product_barcode_secondary, "");
@@ -159,15 +146,14 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
             setTextEditTextById(R.id.product_fdaexpire, "");
             setTextEditTextById(R.id.product_size, "");
             setTextEditTextById(R.id.supplier_name, "");
-            setTextEditTextById(R.id.LOT, "");
+
             setTextEditTextById(R.id.expire, "");
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.list_item, R.id.text);
-            orders.setAdapter(adapter);
+            stock.setAdapter(adapter);
             //chooseWarehouse.setText("选择仓库");
-            setTextEditTextById(R.id.order_qty, "");
-            setTextEditTextById(R.id.qualified_qty, "");
-            setTextEditTextById(R.id.dispatched_qty, "");
-            currentOrder = null;
+            setTextEditTextById(R.id.out_qty, "");
+            setTextEditTextById(R.id.store_qty, "");
+            currentStock = null;
         }
     }
 
@@ -180,6 +166,13 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
                     String WarehouseName = data.getStringExtra("WarehouseName");
                     chooseWarehouse.setText(WarehouseName);
                     warehousesId = data.getStringExtra("WarehouseId");
+                }
+                break;
+            case 2:
+                if (data != null) {
+                    String name = data.getStringExtra("name");
+                    chooseDepartment.setText(name);
+                    departmentId = data.getStringExtra("id");
                 }
                 break;
         }
@@ -309,7 +302,6 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
                         try {
                             JSONObject jsonRes = new JSONObject(res);
                             jsonProduct = jsonRes.getJSONObject("product");
-                            allWarehouses = jsonRes.getString("warehouse");
                             setTextEditTextById(R.id.product_barcode_primary, "product_barcode_primary", jsonProduct);
                             setTextEditTextById(R.id.product_barcode_secondary, "product_barcode_secondary", jsonProduct);
                             setTextEditTextById(R.id.hospital_barcode_primary, "hospital_barcode_primary", jsonProduct);
@@ -319,57 +311,21 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
                             setTextEditTextById(R.id.product_fdacode, "product_fdacode", jsonProduct);
                             setTextEditTextById(R.id.product_fdaexpire, "product_fdaexpire", jsonProduct);
                             setTextEditTextById(R.id.product_size, "product_size", jsonProduct);
-                            allWarehouses = jsonRes.getString("warehouse");
-                            JSONArray jsonArray = new JSONArray(allWarehouses);
-                            boolean hasTheWarehouse = false;
-                            for (int i=0;i<jsonArray.length();i++)
-                            {
-                                if(warehousesId!=null&&warehousesId.equals(jsonArray.getJSONObject(i).getString("id")))
-                                {
-                                    hasTheWarehouse=true;
-                                    break;
-                                }
-                            }
+                            setTextEditTextById(R.id.supplier_name, "manufacture_name", jsonProduct);
 
-                            if (!hasTheWarehouse&& jsonArray.length() > 0) {
-                                chooseWarehouse.setText(jsonArray.getJSONObject(0).getString("name"));
-                                warehousesId = jsonArray.getJSONObject(0).getString("id");
-                            }
-
-                            jsonOrders = jsonRes.getJSONArray("details");
+                            jsonStock = jsonRes.getJSONArray("stock");
                             ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.list_item, R.id.text);
-                            ;
-                            for (int i = 0; i < jsonOrders.length(); i++) {
-                                adapter.add(jsonOrders.getJSONObject(i).getString("order_name"));
+                            for (int i = 0; i < jsonStock.length(); i++) {
+                                adapter.add(jsonStock.getJSONObject(i).getString("LOT"));
                             }
-                            orders.setAdapter(adapter);
-                            if (jsonOrders.length() > 0) {
-                                currentOrder = jsonOrders.getJSONObject(0);
-                                setTextEditTextById(R.id.order_qty, "ordered_qty", currentOrder.getJSONObject("ordered"));
-                                setTextEditTextById(R.id.supplier_name, "supplier_name", currentOrder);
-
-                                JSONArray qualified = currentOrder.getJSONArray("qualified");
-                                if (qualified.length() > 0) {
-                                    JSONObject qualifyDetial = qualified.getJSONObject(0);
-                                    setTextEditTextById(R.id.LOT, "LOT", qualifyDetial);
-                                    setTextEditTextById(R.id.expire, "expire", qualifyDetial);
-                                }
-
-                                int qualified_qty = 0;
-                                for (int i = 0; i < qualified.length(); i++) {
-                                    qualified_qty += qualified.getJSONObject(i).getInt("qty");
-                                }
-                                EditText tt = setTextEditTextById(R.id.qualified_qty, qualified_qty + "");
-                                tt.setEnabled(false);
-                                JSONArray dispatched = currentOrder.getJSONArray("dispatched");
-                                int dispatched_qty = 0;
-                                for (int i = 0; i < dispatched.length(); i++) {
-                                    dispatched_qty += dispatched.getJSONObject(i).getInt("qty");
-                                }
-
-                                EditText editText = setTextEditTextById(R.id.dispatched_qty, (qualified_qty - dispatched_qty) + "");
-                                CharSequence text = editText.getText();
-                                editText.setSelection(text.length());
+                            stock.setAdapter(adapter);
+                            if (jsonStock.length() > 0) {
+                                currentStock = jsonStock.getJSONObject(0);
+                                setTextEditTextById(R.id.store_qty, "qty", currentStock);
+                                setTextEditTextById(R.id.expire, "expire", currentStock);
+                                EditText editText = setTextEditTextById(R.id.out_qty, "");
+//                                CharSequence text = editText.getText();
+//                                editText.setSelection(text.length());
 
                             }
 
@@ -384,7 +340,7 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
                     if (progressDialog != null && progressDialog.isShowing())
                         progressDialog.dismiss();
 
-                    ToastUtil.showShortToast(getContext(),res );
+                    ToastUtil.showShortToast(getContext(), res);
                     try {
                         JSONObject jsonObject = new JSONObject(res);
                         if (jsonObject.getBoolean("dispatch")) {
@@ -399,15 +355,13 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
                             setTextEditTextById(R.id.product_fdaexpire, "");
                             setTextEditTextById(R.id.product_size, "");
                             setTextEditTextById(R.id.supplier_name, "");
-                            setTextEditTextById(R.id.LOT, "");
                             setTextEditTextById(R.id.expire, "");
                             ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.list_item, R.id.text);
-                            orders.setAdapter(adapter);
-                            chooseWarehouse.setText("选择仓库");
+                            stock.setAdapter(adapter);
                             setTextEditTextById(R.id.order_qty, "");
                             setTextEditTextById(R.id.qualified_qty, "");
                             setTextEditTextById(R.id.dispatched_qty, "");
-                            currentOrder = null;
+                            currentStock = null;
                         } else {
                             ToastUtil.showLongToast(getContext(), "提交服务器失败");
                         }
@@ -433,10 +387,38 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
             @Override
             public void run() {
                 super.run();
-                res = dao.searchProductByCode(barcodeStr);
+                res = dao.searchProductByCode(barcodeStr, warehousesId);
                 Message msg = handler.obtainMessage();
                 msg.arg1 = 1;
                 msg.sendToTarget();
+            }
+        }.start();
+
+    }
+
+
+    private void getWarehousesAndDepartment() {
+        if (!CheckNetWorkUtils.updateConnectedFlags(MyApplication.myApplication)) {
+            ToastUtil.showLongToast(MyApplication.myApplication, "网络不可用");
+            return;
+        }
+
+        new Thread() {
+            @Override
+            public void run() {
+                super.run();
+                allWarehouses = dao.getWarehouses();
+                try {
+                    allWarehouses = new JSONObject(allWarehouses).getString("warehouse");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                allDepartment = dao.getDepartment();
+                try {
+                    allDepartment = new JSONObject(allDepartment).getString("deparment");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         }.start();
 
@@ -448,22 +430,14 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
             return;
         }
         try {
-            EditText dispatchedEdit = (EditText) root.findViewById(R.id.dispatched_qty);
+            EditText dispatchedEdit = (EditText) root.findViewById(R.id.out_qty);
             String dispatched_qty = dispatchedEdit.getText().toString();
-            int ordered_qty = currentOrder.getJSONObject("ordered").getInt("ordered_qty");
-            JSONArray qualified = currentOrder.getJSONArray("qualified");
+            int ordered_qty = currentStock.getInt("qty");
             int qualifiedInt = 0;
-            for (int i = 0; i < qualified.length(); i++) {
-                qualifiedInt += qualified.getJSONObject(i).getInt("qty");
-            }
-
             int dispatched = Integer.parseInt(dispatched_qty);
-            if (dispatched > qualifiedInt) {
-                ToastUtil.showLongToast(getContext(), "入库数量不能大于质检数量");
-                return;
-            }
+
             if (dispatched > ordered_qty) {
-                ToastUtil.showLongToast(getContext(), "入库数量不能大于订单数量");
+                ToastUtil.showLongToast(getContext(), "出库数量不能大于入库数量");
                 return;
             }
 
@@ -481,15 +455,15 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
                     String product_id = jsonProduct.getString("rowid");
                     EditText expire = (EditText) root.findViewById(R.id.expire);
                     String dtStart = expire.getText().toString();
-                    String det_rowid = currentOrder.getJSONObject("ordered").getString("det_rowid");
-                    String order_id = currentOrder.getString("order_id");
-                    String pu = currentOrder.getString("pu");
+                    String det_rowid = currentStock.getJSONObject("ordered").getString("det_rowid");
+                    String order_id = currentStock.getString("order_id");
+                    String pu = currentStock.getString("pu");
                     EditText dispatchedEdit = (EditText) root.findViewById(R.id.dispatched_qty);
                     String dispatched_qty = dispatchedEdit.getText().toString();
                     EditText LOTEdit = (EditText) root.findViewById(R.id.LOT);
                     String LOT = LOTEdit.getText().toString();
-                    int ordered_qty = currentOrder.getJSONObject("ordered").getInt("ordered_qty");
-                    JSONArray qualified = currentOrder.getJSONArray("qualified");
+                    int ordered_qty = currentStock.getJSONObject("ordered").getInt("ordered_qty");
+                    JSONArray qualified = currentStock.getJSONArray("qualified");
                     int qualifiedInt = 0;
                     for (int i = 0; i < qualified.length(); i++) {
                         qualifiedInt += qualified.getJSONObject(i).getInt("qty");
@@ -500,8 +474,8 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
                         JSONObject qualifyDetial = qualified.getJSONObject(0);
                         qualified_rowid = qualifyDetial.getString("qualified_rowid");
                     }
-                   // res = dao.instock(warehousesId, product_id, dtStart, det_rowid, qualified_rowid, order_id, pu, dispatched_qty, remain_qty, LOT);
-                    res = dao.outOrders(order_id,"customerid",dispatched_qty,product_id,LOT,"origomStock",det_rowid,"expire",warehousesId);
+                    // res = dao.instock(warehousesId, product_id, dtStart, det_rowid, qualified_rowid, order_id, pu, dispatched_qty, remain_qty, LOT);
+                    res = dao.outOrders(order_id, "customerid", dispatched_qty, product_id, LOT, "origomStock", det_rowid, "expire", warehousesId);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

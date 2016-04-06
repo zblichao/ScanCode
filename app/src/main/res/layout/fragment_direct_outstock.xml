@@ -18,17 +18,41 @@
             android:layout_marginTop="20dp"
             android:background="#999999"></View>
 
-        <Button
-            android:id="@+id/chooseWarehouse"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:drawableRight="@drawable/arr"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:text="选择仓库"
-            android:textAlignment="textStart"
-            android:textSize="16sp" />
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/chooseWarehouse"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:drawableRight="@drawable/arr"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:text="选择仓库"
+                android:textAlignment="textStart"
+                android:textSize="16sp" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="#999999"></View>
+
+            <Button
+                android:id="@+id/chooseDepartment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:drawableRight="@drawable/arr"
+                android:paddingRight="20dp"
+                android:text="选择科室"
+                android:textSize="16sp" />
+        </LinearLayout>
 
         <View
             android:layout_width="match_parent"
@@ -263,89 +287,15 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_weight="4"
-                    android:text="相关订单"
+                    android:text="LOT号"
                     android:textSize="14sp" />
 
                 <Spinner
-                    android:id="@+id/orders"
+                    android:id="@+id/stock"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:spinnerMode="dropdown" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="订单数量"
-                    android:textSize="14sp" />
-
-                <EditText
-                    android:id="@+id/order_qty"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="质检数量"
-                    android:textSize="14sp" />
-
-                <EditText
-                    android:id="@+id/qualified_qty"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
-
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="4"
-                    android:text="出库数量"
-                    android:textSize="14sp" />
-
-                <EditText
-                    android:id="@+id/dispatched_qty"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1">
-
-                </EditText>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="4"
-                    android:text="LOT号"
-                    android:textSize="14sp" />
-
-                <EditText
-                    android:id="@+id/LOT"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textSize="14sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -368,6 +318,43 @@
                     android:textSize="14sp" />
             </LinearLayout>
 
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:layout_weight="1"
+                    android:text="入库数量"
+                    android:textSize="14sp" />
+
+                <EditText
+                    android:id="@+id/store_qty"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="right"
+                    android:layout_weight="1"
+                    android:text="出库数量"
+                    android:textSize="14sp" />
+
+                <EditText
+                    android:id="@+id/out_qty"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="number" />
+
+
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 
@@ -387,14 +374,6 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
             android:text="确认入库" />
-
-        <Button
-            android:id="@+id/show_order"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="10dp"
-            android:text="显示订单" />
 
     </LinearLayout>
 

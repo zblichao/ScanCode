@@ -10,7 +10,29 @@ import java.util.List;
 /**
  * Created by zblichao on 2016-04-06.
  */
-public class DirectOutstockFragmentDAO extends CommonDAO{
+public class DirectOutstockFragmentDAO extends CommonDAO {
+    /**
+     * 根据条形码查找产品
+     *
+     * @param barcode
+     * @return
+     */
+    public String searchProductByCode(String barcode, String warehouse_id) {
+
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new NameValuePair("barcode", barcode));
+        params.add(new NameValuePair("action", "out_info"));
+        params.add(new NameValuePair("warehouse_id", warehouse_id));
+        String res = "";
+        try {
+            res = HttpUtil.Post("index.php", params);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        return res;
+    }
 
     public String outOrders(String orderId, String customerId, String qty, String productId, String lot, String originStock, String detRowId, String expire, String warehouseId) {
         List<NameValuePair> params = new ArrayList<NameValuePair>();

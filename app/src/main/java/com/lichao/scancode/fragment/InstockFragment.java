@@ -72,7 +72,7 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
         orders.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (jsonOrders != null && jsonOrders.length() < position) {
+                if (jsonOrders != null && jsonOrders.length() > position) {
                     try {
                         currentOrder = jsonOrders.getJSONObject(position);
                         setTextEditTextById(R.id.order_qty, "ordered_qty", currentOrder.getJSONObject("ordered"));
@@ -135,12 +135,32 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
             }
         });
         dao = new InstockFragmentDAO();
-        //getWarehouses();
+         getWarehouses();
         //searchProductByCode();
 
         return root;
     }
+    private void getWarehouses() {
+        if (!CheckNetWorkUtils.updateConnectedFlags(MyApplication.myApplication)) {
+            ToastUtil.showLongToast(MyApplication.myApplication, "网络不可用");
+            return;
+        }
 
+        new Thread() {
+            @Override
+            public void run() {
+                super.run();
+                allWarehouses = dao.getWarehouses();
+                try {
+                    allWarehouses = new JSONObject(allWarehouses).getString("warehouse");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }.start();
+
+    }
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         if (!hidden) {
@@ -163,7 +183,7 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
             setTextEditTextById(R.id.expire, "");
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.list_item, R.id.text);
             orders.setAdapter(adapter);
-            //chooseWarehouse.setText("选择仓库");
+
             setTextEditTextById(R.id.order_qty, "");
             setTextEditTextById(R.id.qualified_qty, "");
             setTextEditTextById(R.id.dispatched_qty, "");
@@ -309,7 +329,7 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
                         try {
                             JSONObject jsonRes = new JSONObject(res);
                             jsonProduct = jsonRes.getJSONObject("product");
-                            allWarehouses = jsonRes.getString("warehouse");
+
                             setTextEditTextById(R.id.product_barcode_primary, "product_barcode_primary", jsonProduct);
                             setTextEditTextById(R.id.product_barcode_secondary, "product_barcode_secondary", jsonProduct);
                             setTextEditTextById(R.id.hospital_barcode_primary, "hospital_barcode_primary", jsonProduct);
@@ -319,22 +339,6 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
                             setTextEditTextById(R.id.product_fdacode, "product_fdacode", jsonProduct);
                             setTextEditTextById(R.id.product_fdaexpire, "product_fdaexpire", jsonProduct);
                             setTextEditTextById(R.id.product_size, "product_size", jsonProduct);
-                            allWarehouses = jsonRes.getString("warehouse");
-                            JSONArray jsonArray = new JSONArray(allWarehouses);
-                            boolean hasTheWarehouse = false;
-                            for (int i=0;i<jsonArray.length();i++)
-                            {
-                                if(warehousesId!=null&&warehousesId.equals(jsonArray.getJSONObject(i).getString("id")))
-                                {
-                                    hasTheWarehouse=true;
-                                    break;
-                                }
-                            }
-
-                            if (!hasTheWarehouse&& jsonArray.length() > 0) {
-                                chooseWarehouse.setText(jsonArray.getJSONObject(0).getString("name"));
-                                warehousesId = jsonArray.getJSONObject(0).getString("id");
-                            }
 
                             jsonOrders = jsonRes.getJSONArray("details");
                             ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.list_item, R.id.text);

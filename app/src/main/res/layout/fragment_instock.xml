@@ -18,10 +18,12 @@
             android:layout_marginTop="20dp"
             android:background="#999999"></View>
 
+
         <Button
             android:id="@+id/chooseWarehouse"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:background="@android:color/transparent"
             android:drawableRight="@drawable/arr"
             android:paddingLeft="20dp"
@@ -29,6 +31,7 @@
             android:text="选择仓库"
             android:textAlignment="textStart"
             android:textSize="16sp" />
+
 
         <View
             android:layout_width="match_parent"
@@ -69,6 +72,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:singleLine="true"
                     android:textSize="14sp" />
             </LinearLayout>
 
@@ -89,6 +93,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:singleLine="true"
                     android:textSize="14sp" />
             </LinearLayout>
 
@@ -109,6 +114,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:singleLine="true"
                     android:textSize="14sp" />
             </LinearLayout>
 
@@ -129,6 +135,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:singleLine="true"
                     android:textSize="14sp" />
             </LinearLayout>
 
@@ -149,6 +156,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:singleLine="true"
                     android:textSize="14sp" />
             </LinearLayout>
 
@@ -169,6 +177,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:singleLine="true"
                     android:textSize="14sp" />
             </LinearLayout>
 
@@ -189,9 +198,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:singleLine="true"
                     android:textSize="14sp" />
             </LinearLayout>
-
 
 
             <LinearLayout
@@ -211,6 +220,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:singleLine="true"
                     android:textSize="14sp" />
             </LinearLayout>
 
@@ -231,6 +241,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:singleLine="true"
                     android:textSize="14sp" />
             </LinearLayout>
 
@@ -251,6 +262,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:singleLine="true"
                     android:textSize="14sp" />
             </LinearLayout>
 
@@ -284,42 +296,47 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="订单数量"
+                    android:text="订单"
                     android:textSize="14sp" />
 
                 <EditText
                     android:id="@+id/order_qty"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:inputType="number" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"  android:gravity="right"
-                    android:text="质检数量"
+                    android:layout_weight="1"
+                    android:text="质检"
+                    android:gravity="right"
                     android:textSize="14sp" />
 
                 <EditText
                     android:id="@+id/qualified_qty"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:inputType="number" />
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:gravity="right"
-                    android:text="入库数量"
+                    android:layout_weight="1"
+                    android:text="入库"
                     android:textSize="14sp" />
 
                 <EditText
                     android:id="@+id/dispatched_qty"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1" >
+                    android:layout_weight="1"
+                    android:inputType="number">
 
-                    </EditText>
+                </EditText>
             </LinearLayout>
 
             <LinearLayout
@@ -339,6 +356,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:singleLine="true"
                     android:textSize="14sp" />
             </LinearLayout>
 
@@ -359,6 +377,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:singleLine="true"
                     android:textSize="14sp" />
             </LinearLayout>
 

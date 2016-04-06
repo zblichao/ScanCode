@@ -41,7 +41,23 @@ public class CommonDAO {
      */
     public String getWarehouses() {
         List<NameValuePair> params = new ArrayList<NameValuePair>();
-        params.add(new NameValuePair("action", "show_all_warehouses"));
+        params.add(new NameValuePair("action", "warehouse_info"));
+        String res = "";
+        try {
+            res = HttpUtil.Post("index.php", params);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+    /**
+     * 显示所有可用的库房
+     *
+     * @return
+     */
+    public String getDepartment() {
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new NameValuePair("action", "department_info"));
         String res = "";
         try {
             res = HttpUtil.Post("index.php", params);

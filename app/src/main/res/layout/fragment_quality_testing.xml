@@ -10,8 +10,8 @@
         android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <View
             android:layout_width="match_parent"
@@ -62,15 +62,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="4"
-                    android:textSize="14sp"
-                    android:text="主条码" />
+                    android:text="主条码"
+                    android:textSize="14sp" />
 
                 <EditText
                     android:id="@+id/product_barcode_primary"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="14sp"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:singleLine="true"
+                    android:textSize="14sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -82,15 +83,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="4"
-                    android:textSize="14sp"
-                    android:text="次条码" />
+                    android:text="次条码"
+                    android:textSize="14sp" />
 
                 <EditText
                     android:id="@+id/product_barcode_secondary"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="14sp"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:singleLine="true"
+                    android:textSize="14sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -102,15 +104,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="4"
-                    android:textSize="14sp"
-                    android:text="院内主码" />
+                    android:text="院内主码"
+                    android:textSize="14sp" />
 
                 <EditText
                     android:id="@+id/hospital_barcode_primary"
                     android:layout_width="match_parent"
-                    android:textSize="14sp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:singleLine="true"
+                    android:textSize="14sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -122,15 +125,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="4"
-                    android:textSize="14sp"
-                    android:text="院内次码" />
+                    android:text="院内次码"
+                    android:textSize="14sp" />
 
                 <EditText
                     android:id="@+id/hospital_barcode_secondary"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="14sp"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:singleLine="true"
+                    android:textSize="14sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -142,15 +146,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="4"
-                    android:textSize="14sp"
-                    android:text="货号" />
+                    android:text="货号"
+                    android:textSize="14sp" />
 
                 <EditText
                     android:id="@+id/product_huohao"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="14sp"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:singleLine="true"
+                    android:textSize="14sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -162,15 +167,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="4"
-                    android:textSize="14sp"
-                    android:text="品名" />
+                    android:text="品名"
+                    android:textSize="14sp" />
 
                 <EditText
                     android:id="@+id/product_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="14sp"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:singleLine="true"
+                    android:textSize="14sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -182,15 +188,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="4"
-                    android:textSize="14sp"
-                    android:text="规格" />
+                    android:text="规格"
+                    android:textSize="14sp" />
 
                 <EditText
                     android:id="@+id/product_size"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="14sp"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:singleLine="true"
+                    android:textSize="14sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -202,15 +209,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="4"
-                    android:textSize="14sp"
-                    android:text="LOT号" />
+                    android:text="LOT号"
+                    android:textSize="14sp" />
 
                 <EditText
                     android:id="@+id/LOT"
                     android:layout_width="match_parent"
-                    android:textSize="14sp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:singleLine="true"
+                    android:textSize="14sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -222,16 +230,18 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="4"
-                    android:textSize="14sp"
-                    android:text="有效期" />
+                    android:text="有效期"
+                    android:textSize="14sp" />
 
                 <EditText
                     android:id="@+id/expire"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="14sp"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:singleLine="true"
+                    android:textSize="14sp" />
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -241,15 +251,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="4"
-                    android:textSize="14sp"
-                    android:text="注册证号" />
+                    android:text="注册证号"
+                    android:textSize="14sp" />
 
                 <EditText
                     android:id="@+id/product_fdacode"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="14sp"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:singleLine="true"
+                    android:textSize="14sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -261,15 +272,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="4"
-                    android:textSize="14sp"
-                    android:text="有效期" />
+                    android:text="有效期"
+                    android:textSize="14sp" />
 
                 <EditText
                     android:id="@+id/product_fdaexpire"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="14sp"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:singleLine="true"
+                    android:textSize="14sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -281,15 +293,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="4"
-                    android:textSize="14sp"
-                    android:text="供应商" />
+                    android:text="供应商"
+                    android:textSize="14sp" />
 
                 <EditText
                     android:id="@+id/supplier_name"
                     android:layout_width="match_parent"
-                    android:textSize="14sp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:singleLine="true"
+                    android:textSize="14sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -302,8 +315,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_weight="4"
-                    android:textSize="14sp"
-                    android:text="相关订单" />
+                    android:text="相关订单"
+                    android:textSize="14sp" />
 
                 <Spinner
                     android:id="@+id/orders"
@@ -322,27 +335,32 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:textSize="14sp"
-                    android:text="订单数量" />
+                    android:text="订单数量"
+                    android:textSize="14sp" />
 
                 <EditText
                     android:id="@+id/order_qty"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:singleLine="true" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:textSize="14sp"
-                    android:text="质检数量" />
+                    android:text="质检数量"
+                    android:gravity="right"
+                    android:textSize="14sp" />
 
                 <EditText
                     android:id="@+id/qualified_qty"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1" />
+
+                    android:layout_weight="1"
+                    android:inputType="number"
+                    android:singleLine="true" />
             </LinearLayout>
 
 

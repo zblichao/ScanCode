@@ -27,7 +27,8 @@
         <activity android:name=".activity.ChooseWarehousesActivity" />
         <activity android:name=".activity.OrderDetailActivity" />
         <activity android:name=".activity.OutOrderDetialActivity" />
-        <activity android:name=".activity.ChooseWareHouseActivity"></activity>
+        <activity android:name=".activity.ChooseWareHouseActivity" />
+        <activity android:name=".activity.ChooseDepartmentActivity"></activity>
     </application>
 
 </manifest>
