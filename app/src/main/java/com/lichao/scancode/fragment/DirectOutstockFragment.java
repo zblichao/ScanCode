@@ -61,6 +61,7 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
 
     public void setScanBroadcastReceiver(ScanBroadcastReceiver scanBroadcastReceiver) {
         this.scanBroadcastReceiver = scanBroadcastReceiver;
+
     }
 
     @Nullable
@@ -432,20 +433,10 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
                     String dispatched_qty = dispatchedEdit.getText().toString();
                     EditText LOTEdit = (EditText) root.findViewById(R.id.LOT);
                     String LOT = LOTEdit.getText().toString();
-                    int ordered_qty = currentStock.getJSONObject("ordered").getInt("ordered_qty");
-                    JSONArray qualified = currentStock.getJSONArray("qualified");
-                    int qualifiedInt = 0;
-                    for (int i = 0; i < qualified.length(); i++) {
-                        qualifiedInt += qualified.getJSONObject(i).getInt("qty");
-                    }
-                    String remain_qty = (ordered_qty - qualifiedInt) + "";
-                    String qualified_rowid = "";
-                    if (qualified.length() > 0) {
-                        JSONObject qualifyDetial = qualified.getJSONObject(0);
-                        qualified_rowid = qualifyDetial.getString("qualified_rowid");
-                    }
+                    EditText out_qty = (EditText) root.findViewById(R.id.out_qty);
+                    String ordered_qty=out_qty.getText().toString();
                     // res = dao.instock(warehousesId, product_id, dtStart, det_rowid, qualified_rowid, order_id, pu, dispatched_qty, remain_qty, LOT);
-                    res = dao.outOrders(order_id, "customerid", dispatched_qty, product_id, LOT, "origomStock", det_rowid, "expire", warehousesId);
+                    res = dao.outOrders(departmentId,product_id,ordered_qty, LOT , dtStart,  warehousesId);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
