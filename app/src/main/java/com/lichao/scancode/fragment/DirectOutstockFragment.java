@@ -286,16 +286,20 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
                             setTextEditTextById(R.id.product_size, "product_size", jsonProduct);
                             setTextEditTextById(R.id.supplier_name, "manufacture_name", jsonProduct);
 
-
-//                            if (jsonStock.length() > 0) {
-//                                currentStock = jsonStock.getJSONObject(0);
-//                                setTextEditTextById(R.id.store_qty, "qty", currentStock);
-//                                setTextEditTextById(R.id.expire, "expire", currentStock);
-//                                EditText editText = setTextEditTextById(R.id.out_qty, "");
-//                                CharSequence text = editText.getText();
-//                                editText.setSelection(text.length());
-//
-//                            }
+                            jsonStock = jsonRes.getJSONArray("stock");
+                            if (jsonStock.length() > 0) {
+                                int stockQty=0;
+                                for (int i=0;i<jsonStock.length();i++)
+                                {
+                                    stockQty+=jsonStock.getJSONObject(i).getInt("qty");
+                                }
+                                currentStock = jsonStock.getJSONObject(0);
+                                EditText editText =   setTextEditTextById(R.id.store_qty, ""+stockQty);
+                                editText.setEnabled(false);
+                            }
+                            EditText editText = setTextEditTextById(R.id.out_qty, "");
+                            CharSequence text = editText.getText();
+                            editText.setSelection(text.length());
 
 
                         } catch (JSONException e) {
