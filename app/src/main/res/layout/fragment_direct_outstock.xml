@@ -277,6 +277,7 @@
                     android:textSize="14sp" />
             </LinearLayout>
 
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -285,19 +286,18 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
                     android:layout_weight="4"
                     android:text="LOT号"
                     android:textSize="14sp" />
 
-                <Spinner
-                    android:id="@+id/stock"
+                <EditText
+                    android:id="@+id/LOT"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:spinnerMode="dropdown" />
+                    android:singleLine="true"
+                    android:textSize="14sp" />
             </LinearLayout>
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
