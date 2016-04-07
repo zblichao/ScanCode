@@ -13,11 +13,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
 
 import com.lichao.scancode.MyApplication;
 import com.lichao.scancode.R;
@@ -56,7 +53,6 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
     private String warehousesId;
     private String departmentId;
     private View root;
-    private Spinner stock;
     private JSONArray jsonStock;
     private JSONObject currentStock;
     private JSONObject jsonProduct;
@@ -71,27 +67,7 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_direct_outstock, container, false);
-        stock = (Spinner) root.findViewById(R.id.stock);
-        stock.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (jsonStock != null && jsonStock.length() > position) {
-                    try {
-                        currentStock = jsonStock.getJSONObject(position);
-                        setTextEditTextById(R.id.expire, "expire", currentStock);
-                        setTextEditTextById(R.id.store_qty, "qty", currentStock);
-                        setTextEditTextById(R.id.out_qty, "");
 
-                    } catch (Exception e) {
-                    }
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
         confirm = (Button) root.findViewById(R.id.confirm);
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -146,11 +122,8 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
             setTextEditTextById(R.id.product_fdaexpire, "");
             setTextEditTextById(R.id.product_size, "");
             setTextEditTextById(R.id.supplier_name, "");
-
             setTextEditTextById(R.id.expire, "");
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.list_item, R.id.text);
-            stock.setAdapter(adapter);
-            //chooseWarehouse.setText("选择仓库");
+
             setTextEditTextById(R.id.out_qty, "");
             setTextEditTextById(R.id.store_qty, "");
             currentStock = null;
@@ -313,21 +286,16 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
                             setTextEditTextById(R.id.product_size, "product_size", jsonProduct);
                             setTextEditTextById(R.id.supplier_name, "manufacture_name", jsonProduct);
 
-                            jsonStock = jsonRes.getJSONArray("stock");
-                            ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.list_item, R.id.text);
-                            for (int i = 0; i < jsonStock.length(); i++) {
-                                adapter.add(jsonStock.getJSONObject(i).getString("LOT"));
-                            }
-                            stock.setAdapter(adapter);
-                            if (jsonStock.length() > 0) {
-                                currentStock = jsonStock.getJSONObject(0);
-                                setTextEditTextById(R.id.store_qty, "qty", currentStock);
-                                setTextEditTextById(R.id.expire, "expire", currentStock);
-                                EditText editText = setTextEditTextById(R.id.out_qty, "");
+
+//                            if (jsonStock.length() > 0) {
+//                                currentStock = jsonStock.getJSONObject(0);
+//                                setTextEditTextById(R.id.store_qty, "qty", currentStock);
+//                                setTextEditTextById(R.id.expire, "expire", currentStock);
+//                                EditText editText = setTextEditTextById(R.id.out_qty, "");
 //                                CharSequence text = editText.getText();
 //                                editText.setSelection(text.length());
-
-                            }
+//
+//                            }
 
 
                         } catch (JSONException e) {
@@ -356,8 +324,6 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
                             setTextEditTextById(R.id.product_size, "");
                             setTextEditTextById(R.id.supplier_name, "");
                             setTextEditTextById(R.id.expire, "");
-                            ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.list_item, R.id.text);
-                            stock.setAdapter(adapter);
                             setTextEditTextById(R.id.order_qty, "");
                             setTextEditTextById(R.id.qualified_qty, "");
                             setTextEditTextById(R.id.dispatched_qty, "");
