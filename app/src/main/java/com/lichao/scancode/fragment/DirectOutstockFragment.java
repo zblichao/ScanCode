@@ -97,7 +97,7 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
         });
         dao = new DirectOutstockFragmentDAO();
         getWarehousesAndDepartment();
-//        warehousesId="2";
+        warehousesId="";
 //        barcodeStr="SPH00001979";
 //        searchProductByCode();
 
