@@ -52,6 +52,8 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
     private Button showOrder;
     private String warehousesId;
     private String departmentId;
+    private String LOT;
+    private String expire;
     private View root;
     private JSONArray jsonStock;
     private JSONObject currentStock;
@@ -99,8 +101,6 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
         dao = new DirectOutstockFragmentDAO();
         getWarehousesAndDepartment();
         warehousesId="";
-//        barcodeStr="SPH00001979";
-//        searchProductByCode();
 
         return root;
     }
@@ -124,7 +124,6 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
             setTextEditTextById(R.id.product_size, "");
             setTextEditTextById(R.id.supplier_name, "");
             setTextEditTextById(R.id.expire, "");
-
             setTextEditTextById(R.id.out_qty, "");
             setTextEditTextById(R.id.store_qty, "");
             currentStock = null;
@@ -243,10 +242,12 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
                 break;
             case "hospital-P":
                 this.barcodeStr = barcodeStr.split("\\*")[0];
+
+                System.out.println(barcodeStr);
+
                 editText = setTextEditTextById(R.id.hospital_barcode_primary, barcodeStr.split("\\*")[0]);
                 editText.setEnabled(false);
-                editText = setTextEditTextById(R.id.LOT, barcodeStr.split("\\*")[1]);
-                editText.setEnabled(false);
+                LOT = barcodeStr.split("\\*")[1];
                 if (progressDialog != null && progressDialog.isShowing())
                     return;
                 searchProductByCode();
@@ -254,10 +255,9 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
 
             case "hospital-S":
                 this.barcodeStr = barcodeStr.split("\\*")[0];
-                editText = setTextEditTextById(R.id.expire, barcodeStr.split("\\*")[0]);
-                editText.setEnabled(false);
                 editText = setTextEditTextById(R.id.product_barcode_secondary, barcodeStr);
                 editText.setEnabled(false);
+                expire = barcodeStr.split("\\*")[0];
                 break;
         }
 
@@ -289,14 +289,17 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
 
                             jsonStock = jsonRes.getJSONArray("stock");
                             if (jsonStock.length() > 0) {
-                                int stockQty=0;
                                 for (int i=0;i<jsonStock.length();i++)
-                                {
-                                    stockQty+=jsonStock.getJSONObject(i).getInt("qty");
-                                }
-                                currentStock = jsonStock.getJSONObject(0);
-                                EditText editText =   setTextEditTextById(R.id.store_qty, ""+stockQty);
-                                editText.setEnabled(false);
+                                    if (jsonStock.getJSONObject(i).getString("LOT").equals(LOT))
+                                    {
+                                        EditText editText;
+                                        editText = setTextEditTextById(R.id.LOT, LOT);
+                                        editText.setEnabled(false);
+                                        editText = setTextEditTextById(R.id.expire, jsonStock.getJSONObject(i).getString("expire").toString());
+                                        editText.setEnabled(false);
+                                        editText = setTextEditTextById(R.id.store_qty, jsonStock.getJSONObject(i).getString("qty").toString());
+                                        editText.setEnabled(false);
+                                    }
                             }
                             EditText editText = setTextEditTextById(R.id.out_qty, "");
                             CharSequence text = editText.getText();
@@ -313,7 +316,7 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
                     if (progressDialog != null && progressDialog.isShowing())
                         progressDialog.dismiss();
 
-                    ToastUtil.showShortToast(getContext(), res);
+//                    ToastUtil.showShortToast(getContext(), res);
                     try {
                         JSONObject jsonObject = new JSONObject(res);
                         if (jsonObject.getBoolean("dispatch")) {
@@ -328,10 +331,10 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
                             setTextEditTextById(R.id.product_fdaexpire, "");
                             setTextEditTextById(R.id.product_size, "");
                             setTextEditTextById(R.id.supplier_name, "");
+                            setTextEditTextById(R.id.LOT, "");
                             setTextEditTextById(R.id.expire, "");
-                            setTextEditTextById(R.id.order_qty, "");
-                            setTextEditTextById(R.id.qualified_qty, "");
-                            setTextEditTextById(R.id.dispatched_qty, "");
+                            setTextEditTextById(R.id.store_qty, "");
+                            setTextEditTextById(R.id.out_qty, "");
                             currentStock = null;
                         } else {
                             ToastUtil.showLongToast(getContext(), "提交服务器失败");
@@ -392,7 +395,6 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
                 }
             }
         }.start();
-
     }
 
     private void instock() {
@@ -426,17 +428,11 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
                     String product_id = jsonProduct.getString("rowid");
                     EditText expire = (EditText) root.findViewById(R.id.expire);
                     String dtStart = expire.getText().toString();
-                    String det_rowid = currentStock.getJSONObject("ordered").getString("det_rowid");
-                    String order_id = currentStock.getString("order_id");
-                    String pu = currentStock.getString("pu");
-                    EditText dispatchedEdit = (EditText) root.findViewById(R.id.dispatched_qty);
-                    String dispatched_qty = dispatchedEdit.getText().toString();
                     EditText LOTEdit = (EditText) root.findViewById(R.id.LOT);
                     String LOT = LOTEdit.getText().toString();
                     EditText out_qty = (EditText) root.findViewById(R.id.out_qty);
-                    String ordered_qty=out_qty.getText().toString();
-                    // res = dao.instock(warehousesId, product_id, dtStart, det_rowid, qualified_rowid, order_id, pu, dispatched_qty, remain_qty, LOT);
-                    res = dao.outOrders(departmentId,product_id,ordered_qty, LOT , dtStart,  warehousesId);
+                    String ordered_qty = out_qty.getText().toString();
+                    res = dao.outOrders(departmentId, product_id, ordered_qty, LOT , dtStart,  warehousesId);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
