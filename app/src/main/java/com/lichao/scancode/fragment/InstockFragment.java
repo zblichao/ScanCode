@@ -156,6 +156,9 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                Message msg = handler.obtainMessage();
+                msg.arg1 = 3;
+                msg.sendToTarget();
 
             }
         }.start();
@@ -419,6 +422,16 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
                         e.printStackTrace();
                     }
 //                    ToastUtil.showLongToast(getContext(), res);
+                    break;
+                case 3:
+                    try {
+                        JSONArray jsonArray = new JSONArray(allWarehouses);
+                        if (jsonArray.length() > 0) {
+                            warehousesId = jsonArray.getJSONObject(0).getString("id");
+                            chooseWarehouse.setText(jsonArray.getJSONObject(0).getString("name"));
+                        }
+                    } catch (Exception e) {
+                    }
                     break;
             }
         }
