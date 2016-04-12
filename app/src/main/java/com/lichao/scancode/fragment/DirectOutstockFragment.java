@@ -289,9 +289,8 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
 
                             jsonStock = jsonRes.getJSONArray("stock");
                             if (jsonStock.length() > 0) {
-                                for (int i=0;i<jsonStock.length();i++)
-                                    if (jsonStock.getJSONObject(i).getString("LOT").equals(LOT))
-                                    {
+                                for (int i = 0; i < jsonStock.length(); i++)
+                                    if (jsonStock.getJSONObject(i).getString("LOT").equals(LOT)) {
                                         EditText editText;
                                         editText = setTextEditTextById(R.id.LOT, LOT);
                                         editText.setEnabled(false);
@@ -344,6 +343,16 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
                     }
 //                    ToastUtil.showLongToast(getContext(), res);
                     break;
+                case 3:
+                    try {
+                        JSONArray jsonArray = new JSONArray(allWarehouses);
+                        if (jsonArray.length() > 0) {
+                            warehousesId = jsonArray.getJSONObject(0).getString("id");
+                            chooseWarehouse.setText(jsonArray.getJSONObject(0).getString("name"));
+                        }
+                    } catch (Exception e) {
+                    }
+                    break;
             }
         }
     };
@@ -393,6 +402,9 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                Message msg = handler.obtainMessage();
+                msg.arg1 = 3;
+                msg.sendToTarget();
             }
         }.start();
     }
