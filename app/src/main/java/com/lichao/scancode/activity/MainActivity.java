@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import com.lichao.scancode.MyApplication;
 import com.lichao.scancode.R;
 import com.lichao.scancode.fragment.CheckOrderFragment;
+import com.lichao.scancode.fragment.CorrespondenceFragment;
 import com.lichao.scancode.fragment.DirectOutstockFragment;
 import com.lichao.scancode.fragment.InstockFragment;
 import com.lichao.scancode.fragment.OutstockFragment;
@@ -30,6 +31,7 @@ public class MainActivity extends AppCompatActivity
     private OutstockFragment outstockFragment;
     private DirectOutstockFragment directOutstockFragment;
     private QualityTestingFragment qualityTestingFragment;
+    private CorrespondenceFragment correspondenceFragment;
     private Toolbar toolbar;
     private String currentMenuItem;
     public  final static String SCAN_ACTION = "urovo.rcv.message";//扫描结束action
@@ -56,6 +58,7 @@ public class MainActivity extends AppCompatActivity
             JSONObject permission = new JSONObject(MyApplication.myApplication.getUser().getPermission());
             if(permission.getBoolean("qualify"))
             navigationView.getMenu().add("质检");
+            navigationView.getMenu().add("条码对应");
             //if(permission.getBoolean(""))
             navigationView.getMenu().add("入库");
             // if(permission.getBoolean(""))
@@ -65,6 +68,7 @@ public class MainActivity extends AppCompatActivity
 
             //if(permission.getBoolean(""))
             navigationView.getMenu().add("查看订单");
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -78,15 +82,20 @@ public class MainActivity extends AppCompatActivity
         outstockFragment = new OutstockFragment();
         qualityTestingFragment = new QualityTestingFragment();
         qualityTestingFragment.setScanBroadcastReceiver(scanBroadcastReceiver);
+        correspondenceFragment = new CorrespondenceFragment();
+        correspondenceFragment.setScanBroadcastReceiver(scanBroadcastReceiver);
+
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fragment_container, checkOrderFragment)
                 .add(R.id.fragment_container, instockFragment)
                 .add(R.id.fragment_container, outstockFragment)
                 .add(R.id.fragment_container, qualityTestingFragment)
                 .add(R.id.fragment_container, directOutstockFragment)
+                .add(R.id.fragment_container, correspondenceFragment)
                 .hide(instockFragment)
                 .hide(directOutstockFragment)
                 .hide(outstockFragment)
+                .hide(correspondenceFragment)
                 .show(qualityTestingFragment)
                 .hide(checkOrderFragment)
                 .commit();
@@ -130,6 +139,9 @@ public class MainActivity extends AppCompatActivity
                 case "扫码出库":
                     directOutstockFragment.onReceiveBarcode(type, barcodeStr);
                     break;
+                case "条码对应":
+                    correspondenceFragment.onReceiveBarcode(type, barcodeStr);
+                    break;
             }
         }
     };
@@ -160,6 +172,7 @@ public class MainActivity extends AppCompatActivity
                 trx.hide(qualityTestingFragment);
                 trx.hide(directOutstockFragment);
                 trx.show(checkOrderFragment);
+                trx.hide(correspondenceFragment);
                 toolbar.setTitle("查看订单");
                 break;
             case "出库":
@@ -168,6 +181,7 @@ public class MainActivity extends AppCompatActivity
                 trx.hide(qualityTestingFragment);
                 trx.hide(directOutstockFragment);
                 trx.hide(checkOrderFragment);
+                trx.hide(correspondenceFragment);
                 toolbar.setTitle("出库");
                 break;
             case "入库":
@@ -176,6 +190,7 @@ public class MainActivity extends AppCompatActivity
                 trx.hide(qualityTestingFragment);
                 trx.hide(directOutstockFragment);
                 trx.hide(checkOrderFragment);
+                trx.hide(correspondenceFragment);
                 toolbar.setTitle("入库");
                 break;
             case "质检":
@@ -184,6 +199,7 @@ public class MainActivity extends AppCompatActivity
                 trx.show(qualityTestingFragment);
                 trx.hide(directOutstockFragment);
                 trx.hide(checkOrderFragment);
+                trx.hide(correspondenceFragment);
                 toolbar.setTitle("质检");
                 break;
             case "扫码出库":
@@ -192,8 +208,17 @@ public class MainActivity extends AppCompatActivity
                 trx.hide(qualityTestingFragment);
                 trx.show(directOutstockFragment);
                 trx.hide(checkOrderFragment);
+                trx.hide(correspondenceFragment);
                 toolbar.setTitle("扫码出库");
                 break;
+            case "条码对应":
+                trx.hide(instockFragment);
+                trx.hide(outstockFragment);
+                trx.hide(qualityTestingFragment);
+                trx.show(correspondenceFragment);
+                trx.hide(directOutstockFragment);
+                trx.hide(checkOrderFragment);
+                toolbar.setTitle("条码对应");
         }
         trx.commit();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
