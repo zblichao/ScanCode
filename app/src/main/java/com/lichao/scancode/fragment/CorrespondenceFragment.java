@@ -49,14 +49,12 @@ public class CorrespondenceFragment extends Fragment implements BarcodeReceiver 
     private String barcodeStr;
     private Button chooseWarehouse;
     private Button confirm;
-    private Button showOrder;
     private String warehousesId;
     private View root;
-    private Spinner orders;
     private JSONArray jsonOrders;
     private JSONObject currentOrder;
     private JSONObject jsonProduct;
-    private EAN128Parser ean128Parser = new EAN128Parser(); // 你看看放哪儿合适，我一般放在onCreate
+    private EAN128Parser ean128Parser = new EAN128Parser();
     private HIBCParser hibcParser = new HIBCParser();
 
     public void setScanBroadcastReceiver(ScanBroadcastReceiver scanBroadcastReceiver) {
@@ -67,32 +65,6 @@ public class CorrespondenceFragment extends Fragment implements BarcodeReceiver 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_correspondence, container, false);
-        orders = (Spinner) root.findViewById(R.id.orders);
-        orders.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (jsonOrders != null && jsonOrders.length() < position) {
-                    try {
-                        currentOrder = jsonOrders.getJSONObject(position);
-                        setTextEditTextById(R.id.order_qty, "ordered_qty", currentOrder.getJSONObject("ordered"));
-                        setTextEditTextById(R.id.supplier_name, "supplier_name", currentOrder);
-                        JSONArray dispatched = currentOrder.getJSONArray("dispatched");
-                        int qualified_qty = 0;
-                        for (int i = 0; i < dispatched.length(); i++) {
-                            qualified_qty += dispatched.getJSONObject(i).getInt("qty");
-                        }
-                        setTextEditTextById(R.id.qualified_qty, (currentOrder.getJSONObject("ordered").getInt("ordered_qty") - qualified_qty) + "");
-
-                    } catch (Exception e) {
-                    }
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
         confirm = (Button) root.findViewById(R.id.confirm);
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,24 +73,6 @@ public class CorrespondenceFragment extends Fragment implements BarcodeReceiver 
             }
         });
 
-        showOrder = (Button) root.findViewById(R.id.show_order);
-        showOrder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (currentOrder != null) {
-                    Intent intent = new Intent(getContext(), OrderDetailActivity.class);
-                    try {
-                        intent.putExtra("id", currentOrder.getString("order_id"));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    startActivity(intent);
-                } else {
-                    ToastUtil.showShortToast(getContext(), "请扫码并选择订单");
-                }
-            }
-        });
         chooseWarehouse = (Button) root.findViewById(R.id.chooseWarehouse);
         chooseWarehouse.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -131,8 +85,6 @@ public class CorrespondenceFragment extends Fragment implements BarcodeReceiver 
         dao = new CorrespondenceFragmentDAO();
         //getWarehouses();
         //searchProductByCode();
-        EditText qualified_qty = (EditText) root.findViewById(R.id.qualified_qty);
-        qualified_qty.requestFocus();
         return root;
     }
 
@@ -142,26 +94,15 @@ public class CorrespondenceFragment extends Fragment implements BarcodeReceiver 
         if (!hidden) {
             InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(root.getWindowToken(), 0);
-            EditText qualified_qty = (EditText) root.findViewById(R.id.qualified_qty);
-            qualified_qty.requestFocus();
             setTextEditTextById(R.id.product_barcode_primary, "");
-            setTextEditTextById(R.id.product_barcode_secondary, "");
             setTextEditTextById(R.id.hospital_barcode_primary, "");
-            setTextEditTextById(R.id.hospital_barcode_secondary, "");
             setTextEditTextById(R.id.product_name, "");
-            setTextEditTextById(R.id.product_huohao, "");
             setTextEditTextById(R.id.product_fdacode, "");
             setTextEditTextById(R.id.product_fdaexpire, "");
             setTextEditTextById(R.id.product_size, "");
-            setTextEditTextById(R.id.supplier_name, "");
-            setTextEditTextById(R.id.LOT, "");
-            setTextEditTextById(R.id.expire, "");
 
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.list_item, R.id.text);
-            orders.setAdapter(adapter);
             chooseWarehouse.setText("选择仓库");
-            setTextEditTextById(R.id.order_qty, "");
-            setTextEditTextById(R.id.qualified_qty, "");
             currentOrder = null;
         }
     }
@@ -196,46 +137,14 @@ public class CorrespondenceFragment extends Fragment implements BarcodeReceiver 
                 searchProductByCode();
                 break;
             case "code128-S":
-                this.barcodeStr = barcodeStr;
-                editText = setTextEditTextById(R.id.product_barcode_secondary, barcodeStr);
-                editText.setEnabled(false);
-                try {
-                    list = ean128Parser.parseBarcodeToList(barcodeStr);
-                    for (int i = 0; i < list.size(); i++) {
-                        if (list.get(i).getName().equals("LOT")) {
-                            editText = setTextEditTextById(R.id.LOT, list.get(i).getValue());
-                            editText.setEnabled(false);
-                        }
-                        if (list.get(i).getName().equals("expire")) {
-                            editText = setTextEditTextById(R.id.expire, list.get(i).getValue());
-                            editText.setEnabled(false);
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
                 break;
             case "code128":
                 this.barcodeStr = barcodeStr.substring(0, 16);
                 editText = setTextEditTextById(R.id.product_barcode_primary, barcodeStr.substring(0, 16));
                 editText.setEnabled(false);
-                editText = setTextEditTextById(R.id.product_barcode_secondary, barcodeStr.substring(16));
-                editText.setEnabled(false);
                 if (progressDialog != null && progressDialog.isShowing())
                     return;
                 searchProductByCode();
-
-                list = hibcParser.HIBCSecondaryParser(barcodeStr.substring(16));
-                for (int i = 0; i < list.size(); i++) {
-                    if (list.get(i).getName().equals("LOT")) {
-                        editText = setTextEditTextById(R.id.LOT, list.get(i).getValue());
-                        editText.setEnabled(false);
-                    }
-                    if (list.get(i).getName().equals("expire")) {
-                        editText = setTextEditTextById(R.id.expire, list.get(i).getValue());
-                        editText.setEnabled(false);
-                    }
-                }
                 break;
             case "HIBC-P":
                 this.barcodeStr = barcodeStr;
@@ -246,20 +155,6 @@ public class CorrespondenceFragment extends Fragment implements BarcodeReceiver 
                 searchProductByCode();
                 break;
             case "HIBC-S":
-                this.barcodeStr = barcodeStr;
-                editText = setTextEditTextById(R.id.product_barcode_secondary, barcodeStr);
-                editText.setEnabled(false);
-                list = hibcParser.HIBCSecondaryParser(barcodeStr);
-                for (int i = 0; i < list.size(); i++) {
-                    if (list.get(i).getName().equals("LOT")) {
-                        editText = setTextEditTextById(R.id.LOT, list.get(i).getValue());
-                        editText.setEnabled(false);
-                    }
-                    if (list.get(i).getName().equals("expire")) {
-                        editText = setTextEditTextById(R.id.expire, list.get(i).getValue());
-                        editText.setEnabled(false);
-                    }
-                }
                 break;
             case "EAN13":
                 this.barcodeStr = barcodeStr;
@@ -273,19 +168,12 @@ public class CorrespondenceFragment extends Fragment implements BarcodeReceiver 
                 this.barcodeStr = barcodeStr.split("\\*")[0];
                 editText = setTextEditTextById(R.id.hospital_barcode_primary, barcodeStr.split("\\*")[0]);
                 editText.setEnabled(false);
-                editText = setTextEditTextById(R.id.LOT, barcodeStr.split("\\*")[1]);
-                editText.setEnabled(false);
                 if (progressDialog != null && progressDialog.isShowing())
                     return;
                 searchProductByCode();
                 break;
 
             case "hospital-S":
-                this.barcodeStr = barcodeStr.split("\\*")[0];
-                editText = setTextEditTextById(R.id.hospital_barcode_secondary, barcodeStr);
-                editText.setEnabled(false);
-                editText = setTextEditTextById(R.id.expire, barcodeStr.split("\\*")[0]);
-                editText.setEnabled(false);
                 break;
         }
 
@@ -306,11 +194,8 @@ public class CorrespondenceFragment extends Fragment implements BarcodeReceiver 
                             jsonProduct = jsonRes.getJSONObject("product");
                             allWarehouses = jsonRes.getString("warehouse");
                             setTextEditTextById(R.id.product_barcode_primary, "product_barcode_primary", jsonProduct);
-                            setTextEditTextById(R.id.product_barcode_secondary, "product_barcode_secondary", jsonProduct);
                             setTextEditTextById(R.id.hospital_barcode_primary, "hospital_barcode_primary", jsonProduct);
-                            setTextEditTextById(R.id.hospital_barcode_secondary, "hospital_barcode_secondary", jsonProduct);
                             setTextEditTextById(R.id.product_name, "product_name", jsonProduct);
-                            setTextEditTextById(R.id.product_huohao, "product_huohao", jsonProduct);
                             setTextEditTextById(R.id.product_fdacode, "product_fdacode", jsonProduct);
                             setTextEditTextById(R.id.product_fdaexpire, "product_fdaexpire", jsonProduct);
                             setTextEditTextById(R.id.product_size, "product_size", jsonProduct);
@@ -327,21 +212,6 @@ public class CorrespondenceFragment extends Fragment implements BarcodeReceiver 
                             for (int i = 0; i < jsonOrders.length(); i++) {
                                 adapter.add(jsonOrders.getJSONObject(i).getString("order_name"));
                             }
-                            orders.setAdapter(adapter);
-                            if (jsonOrders.length() > 0) {
-                                currentOrder = jsonOrders.getJSONObject(0);
-                                setTextEditTextById(R.id.order_qty, "ordered_qty", currentOrder.getJSONObject("ordered"));
-                                setTextEditTextById(R.id.supplier_name, "supplier_name", currentOrder);
-                                JSONArray qualified = currentOrder.getJSONArray("qualified");
-                                int qualified_qty = 0;
-                                for (int i = 0; i < qualified.length(); i++) {
-                                    qualified_qty += qualified.getJSONObject(i).getInt("qty");
-                                }
-                                EditText editText = setTextEditTextById(R.id.qualified_qty, (currentOrder.getJSONObject("ordered").getInt("ordered_qty") - qualified_qty) + "");
-                                CharSequence text = editText.getText();
-                                editText.setSelection(text.length());
-                            }
-
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -352,27 +222,21 @@ public class CorrespondenceFragment extends Fragment implements BarcodeReceiver 
                 case 2:
                     if (progressDialog != null && progressDialog.isShowing())
                         progressDialog.dismiss();
+
+//                    System.out.println(res);
+
                     try {
                         JSONObject jsonObject = new JSONObject(res);
                         if (jsonObject.getBoolean("qualify")) {
                             ToastUtil.showLongToast(getContext(), "提交服务器成功");
                             setTextEditTextById(R.id.product_barcode_primary, "");
-                            setTextEditTextById(R.id.product_barcode_secondary, "");
                             setTextEditTextById(R.id.hospital_barcode_primary, "");
-                            setTextEditTextById(R.id.hospital_barcode_secondary, "");
                             setTextEditTextById(R.id.product_name, "");
-                            setTextEditTextById(R.id.product_huohao, "");
                             setTextEditTextById(R.id.product_fdacode, "");
                             setTextEditTextById(R.id.product_fdaexpire, "");
                             setTextEditTextById(R.id.product_size, "");
-                            setTextEditTextById(R.id.supplier_name, "");
-                            setTextEditTextById(R.id.LOT, "");
-                            setTextEditTextById(R.id.expire, "");
                             ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.list_item, R.id.text);
-                            orders.setAdapter(adapter);
                             chooseWarehouse.setText("选择仓库");
-                            setTextEditTextById(R.id.order_qty, "");
-                            setTextEditTextById(R.id.qualified_qty, "");
                             currentOrder = null;
                         } else {
                             ToastUtil.showLongToast(getContext(), "提交服务器失败");
@@ -380,7 +244,7 @@ public class CorrespondenceFragment extends Fragment implements BarcodeReceiver 
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    ToastUtil.showLongToast(getContext(), res);
+//                    ToastUtil.showLongToast(getContext(), res);
                     break;
             }
         }
@@ -413,16 +277,16 @@ public class CorrespondenceFragment extends Fragment implements BarcodeReceiver 
             ToastUtil.showLongToast(MyApplication.myApplication, "网络不可用");
             return;
         }
-        EditText LOTEdit = (EditText) root.findViewById(R.id.LOT);
-        final String LOT = LOTEdit.getText().toString();
-        if (LOT == null || LOT.equals("")) {
-            ToastUtil.showShortToast(getContext(), "请填写LOT");
+        EditText productEdit = (EditText) root.findViewById(R.id.product_barcode_primary);
+        final String productBarcode = productEdit.getText().toString();
+        if (productBarcode == null || productBarcode.equals("")) {
+            ToastUtil.showShortToast(getContext(), "请扫描产品主码");
             return;
         }
-        EditText expire = (EditText) root.findViewById(R.id.expire);
-        final String dtStart = expire.getText().toString();
-        if (dtStart == null || dtStart.equals("")) {
-            ToastUtil.showShortToast(getContext(), "请填写LOT过期日期");
+        EditText hospitalEdit = (EditText) root.findViewById(R.id.hospital_barcode_primary);
+        final String hospitalBarcode = hospitalEdit.getText().toString();
+        if (hospitalBarcode == null || hospitalBarcode.equals("")) {
+            ToastUtil.showShortToast(getContext(), "请扫描院内主码");
             return;
         }
         progressDialog = ProgressDialog.show(this.getContext(), // context
@@ -433,32 +297,13 @@ public class CorrespondenceFragment extends Fragment implements BarcodeReceiver 
             @Override
             public void run() {
                 super.run();
+                res = dao.qualify(productBarcode, hospitalBarcode);
 
-                try {
-
-                    String product_id = jsonProduct.getString("rowid");
-                    String det_rowid = currentOrder.getJSONObject("ordered").getString("det_rowid");
-                    String order_id = currentOrder.getString("order_id");
-                    String pu = currentOrder.getString("pu");
-                    EditText qualifiedEdit = (EditText) root.findViewById(R.id.qualified_qty);
-                    String qualified_qty = qualifiedEdit.getText().toString();
-                    int ordered_qty = currentOrder.getJSONObject("ordered").getInt("ordered_qty");
-                    JSONArray qualified = currentOrder.getJSONArray("qualified");
-                    int qualifiedInt = 0;
-                    for (int i = 0; i < qualified.length(); i++) {
-                        qualifiedInt += qualified.getJSONObject(i).getInt("qty");
-                    }
-                    String remain_qty = (ordered_qty - qualifiedInt) + "";
-                    res = dao.qualify(product_id, dtStart, det_rowid, order_id, pu, qualified_qty, remain_qty, LOT);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
                 Message msg = handler.obtainMessage();
                 msg.arg1 = 2;
                 msg.sendToTarget();
             }
         }.start();
-
     }
 
     private EditText setTextEditTextById(int id, String key, JSONObject jsonObject) {

@@ -373,7 +373,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
-            android:text="确认入库" />
+            android:text="确认出库" />
 
     </LinearLayout>
 

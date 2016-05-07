@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.lichao.scancode.MyApplication;
 import com.lichao.scancode.R;
@@ -260,8 +261,6 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
                 expire = barcodeStr.split("\\*")[0];
                 break;
         }
-
-
     }
 
     Handler handler = new Handler() {
@@ -414,6 +413,33 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
             ToastUtil.showLongToast(MyApplication.myApplication, "网络不可用");
             return;
         }
+
+        if (warehousesId == null) {
+            ToastUtil.showLongToast(MyApplication.myApplication, "请选择出库库房");
+            return;
+        }
+
+        if (departmentId == null) {
+            ToastUtil.showLongToast(MyApplication.myApplication, "请选择科室");
+            return;
+        }
+
+        if (((EditText) root.findViewById(R.id.product_name)).getText().toString().length() == 0) {
+            ToastUtil.showLongToast(MyApplication.myApplication, "请扫码");
+            return;
+        }
+
+        if ((((EditText) root.findViewById(R.id.LOT)).getText().toString().length() == 0) ||
+                (((EditText) root.findViewById(R.id.expire)).getText().toString().length() == 0)) {
+            ToastUtil.showLongToast(MyApplication.myApplication, "未找到库存");
+            return;
+        }
+
+        if (((EditText) root.findViewById(R.id.out_qty)).getText().toString().length() == 0) {
+            ToastUtil.showLongToast(MyApplication.myApplication, "请填写数量");
+            return;
+        }
+
         try {
             EditText dispatchedEdit = (EditText) root.findViewById(R.id.out_qty);
             String dispatched_qty = dispatchedEdit.getText().toString();
@@ -422,7 +448,7 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
             int dispatched = Integer.parseInt(dispatched_qty);
 
             if (dispatched > ordered_qty) {
-                ToastUtil.showLongToast(getContext(), "出库数量不能大于入库数量");
+                ToastUtil.showLongToast(getContext(), "出库数量不能大于库存数量");
                 return;
             }
 

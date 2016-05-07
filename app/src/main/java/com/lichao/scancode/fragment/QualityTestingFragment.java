@@ -380,7 +380,7 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    ToastUtil.showLongToast(getContext(), res);
+//                    ToastUtil.showLongToast(getContext(), res);
                     break;
             }
         }
