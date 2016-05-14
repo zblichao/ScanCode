@@ -20,8 +20,6 @@ import java.util.concurrent.Exchanger;
  * Created by zblichao on 2016-03-15.
  */
 public class DepartmentAdapter extends BaseAdapter {
-
-
     public String filter;
     private List<JSONObject> list;
     private List<JSONObject> listShow;
