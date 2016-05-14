@@ -7,18 +7,24 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SearchView;
 
 import com.lichao.scancode.R;
+import com.lichao.scancode.adapter.DepartmentAdapter;
 import com.lichao.scancode.fragment.InstockFragment;
+import com.lichao.scancode.util.JSONHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.List;
+
 public class ChooseDepartmentActivity extends AppCompatActivity {
     private ListView listview;
-    private JSONArray jsonArray;
-
+    private List<JSONObject> jsonArray;
+    private SearchView searchView;
+    private DepartmentAdapter departmentAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,14 +32,14 @@ public class ChooseDepartmentActivity extends AppCompatActivity {
         setTitle("库房选择");
         String data = getIntent().getStringExtra("data");
         listview = (ListView) findViewById(R.id.list);
+        departmentAdapter= new DepartmentAdapter(this);
         if (data != null) {
             try {
-                jsonArray = new JSONArray(data);
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.list_item, R.id.text);  ;
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    adapter.add(jsonArray.getJSONObject(i).getString("name"));
-                }
-                listview.setAdapter(adapter);
+                jsonArray = JSONHelper.JSONArray(data);
+
+                departmentAdapter.setList(jsonArray);
+                departmentAdapter.notifyDataSetChanged();
+                listview.setAdapter(departmentAdapter);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -42,7 +48,7 @@ public class ChooseDepartmentActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 try {
-                    JSONObject json = jsonArray.getJSONObject(position);
+                    JSONObject json = jsonArray.get(position);
                     String  name = json.getString("name");
                     String  ids = json.getString("id");
                     Intent intent = new Intent(ChooseDepartmentActivity.this, InstockFragment.class);
@@ -55,5 +61,21 @@ public class ChooseDepartmentActivity extends AppCompatActivity {
                 }
             }
         });
+        searchView= (SearchView) findViewById(R.id.searchView);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                departmentAdapter.filter=newText;
+                departmentAdapter.notifyDataSetChanged();
+                return false;
+            }
+        });
+
     }
 }
