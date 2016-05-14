@@ -22,7 +22,7 @@ import java.util.concurrent.Exchanger;
 public class DepartmentAdapter extends BaseAdapter {
     public String filter;
     private List<JSONObject> list;
-    private List<JSONObject> listShow;
+    public List<JSONObject> listShow;
     private Context mContext;
     private LayoutInflater inflater;
     public DepartmentAdapter() {
