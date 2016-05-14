@@ -23,7 +23,7 @@ import java.util.List;
 public class ChooseDepartmentActivity extends AppCompatActivity {
 
     private ListView listview;
-    private List<JSONObject> jsonArray;
+    //private List<JSONObject> jsonArray;
     private SearchView searchView;
     private DepartmentAdapter departmentAdapter;
     @Override
@@ -36,7 +36,7 @@ public class ChooseDepartmentActivity extends AppCompatActivity {
         departmentAdapter= new DepartmentAdapter(this);
         if (data != null) {
             try {
-                jsonArray = JSONHelper.JSONArray(data);
+                List<JSONObject>  jsonArray = JSONHelper.JSONArray(data);
 
                 departmentAdapter.setList(jsonArray);
                 departmentAdapter.notifyDataSetChanged();
@@ -49,7 +49,7 @@ public class ChooseDepartmentActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 try {
-                    JSONObject json = jsonArray.get(position);
+                    JSONObject json = departmentAdapter.listShow.get(position);
                     String  name = json.getString("name");
                     String  ids = json.getString("id");
                     Intent intent = new Intent(ChooseDepartmentActivity.this, InstockFragment.class);
