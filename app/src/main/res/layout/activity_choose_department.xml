@@ -21,7 +21,6 @@
         android:background="#999999"
         android:layout_below="@+id/searchView"></View>
 
-    
     <ListView
         android:id="@+id/list"
         android:layout_width="match_parent"
