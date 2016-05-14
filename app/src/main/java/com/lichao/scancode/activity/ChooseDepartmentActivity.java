@@ -21,6 +21,7 @@ import org.json.JSONObject;
 import java.util.List;
 
 public class ChooseDepartmentActivity extends AppCompatActivity {
+
     private ListView listview;
     private List<JSONObject> jsonArray;
     private SearchView searchView;
