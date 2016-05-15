@@ -50,6 +50,7 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
     private Button chooseWarehouse;
     private Button chooseDepartment;
     private Button confirm;
+    private Button clearContent;
     private Button showOrder;
     private String warehousesId;
     private String departmentId;
@@ -77,6 +78,27 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
             @Override
             public void onClick(View v) {
                 instock();
+            }
+        });
+
+        clearContent = (Button) root.findViewById(R.id.clear);
+        clearContent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setTextEditTextById(R.id.product_barcode_primary, "");
+                setTextEditTextById(R.id.product_barcode_secondary, "");
+                setTextEditTextById(R.id.hospital_barcode_primary, "");
+                setTextEditTextById(R.id.hospital_barcode_secondary, "");
+                setTextEditTextById(R.id.product_huohao, "");
+                setTextEditTextById(R.id.product_name, "");
+                setTextEditTextById(R.id.product_size, "");
+                setTextEditTextById(R.id.LOT, "");
+                setTextEditTextById(R.id.expire, "");
+                setTextEditTextById(R.id.supplier_name, "");
+                setTextEditTextById(R.id.product_fdacode, "");
+                setTextEditTextById(R.id.product_fdaexpire, "");
+                setTextEditTextById(R.id.store_qty, "");
+                setTextEditTextById(R.id.out_qty, "");
             }
         });
 
@@ -154,7 +176,7 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
 
     @Override
     public void onReceiveBarcode(String type, String barcodeStr) {
-        //ToastUtil.showLongToast(MyApplication.myApplication, type + ":" + barcodeStr);
+        //ToastUtil.showShortToast(MyApplication.myApplication, type + ":" + barcodeStr);
 
         ArrayList<NameValuePair> list;
         EditText editText;
@@ -318,7 +340,7 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
                     try {
                         JSONObject jsonObject = new JSONObject(res);
                         if (jsonObject.getBoolean("dispatch")) {
-                            ToastUtil.showLongToast(getContext(), "提交服务器成功");
+                            ToastUtil.showShortToast(getContext(), "提交服务器成功");
                             setTextEditTextById(R.id.product_barcode_primary, "");
                             setTextEditTextById(R.id.product_barcode_secondary, "");
                             setTextEditTextById(R.id.hospital_barcode_primary, "");
@@ -335,12 +357,12 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
                             setTextEditTextById(R.id.out_qty, "");
                             currentStock = null;
                         } else {
-                            ToastUtil.showLongToast(getContext(), "提交服务器失败");
+                            ToastUtil.showShortToast(getContext(), "提交服务器失败");
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-//                    ToastUtil.showLongToast(getContext(), res);
+//                    ToastUtil.showShortToast(getContext(), res);
                     break;
                 case 3:
                     try {
@@ -358,7 +380,7 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
 
     private void searchProductByCode() {
         if (!CheckNetWorkUtils.updateConnectedFlags(MyApplication.myApplication)) {
-            ToastUtil.showLongToast(MyApplication.myApplication, "网络不可用");
+            ToastUtil.showShortToast(MyApplication.myApplication, "网络不可用");
             return;
         }
         progressDialog = ProgressDialog.show(this.getContext(), // context
@@ -381,7 +403,7 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
 
     private void getWarehousesAndDepartment() {
         if (!CheckNetWorkUtils.updateConnectedFlags(MyApplication.myApplication)) {
-            ToastUtil.showLongToast(MyApplication.myApplication, "网络不可用");
+            ToastUtil.showShortToast(MyApplication.myApplication, "网络不可用");
             return;
         }
 
@@ -410,33 +432,33 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
 
     private void instock() {
         if (!CheckNetWorkUtils.updateConnectedFlags(MyApplication.myApplication)) {
-            ToastUtil.showLongToast(MyApplication.myApplication, "网络不可用");
+            ToastUtil.showShortToast(MyApplication.myApplication, "网络不可用");
             return;
         }
 
         if (warehousesId == null) {
-            ToastUtil.showLongToast(MyApplication.myApplication, "请选择出库库房");
+            ToastUtil.showShortToast(MyApplication.myApplication, "请选择出库库房");
             return;
         }
 
         if (departmentId == null) {
-            ToastUtil.showLongToast(MyApplication.myApplication, "请选择科室");
+            ToastUtil.showShortToast(MyApplication.myApplication, "请选择科室");
             return;
         }
 
         if (((EditText) root.findViewById(R.id.product_name)).getText().toString().length() == 0) {
-            ToastUtil.showLongToast(MyApplication.myApplication, "请扫码");
+            ToastUtil.showShortToast(MyApplication.myApplication, "请扫码");
             return;
         }
 
         if ((((EditText) root.findViewById(R.id.LOT)).getText().toString().length() == 0) ||
                 (((EditText) root.findViewById(R.id.expire)).getText().toString().length() == 0)) {
-            ToastUtil.showLongToast(MyApplication.myApplication, "未找到库存");
+            ToastUtil.showShortToast(MyApplication.myApplication, "未找到库存");
             return;
         }
 
         if (((EditText) root.findViewById(R.id.out_qty)).getText().toString().length() == 0) {
-            ToastUtil.showLongToast(MyApplication.myApplication, "请填写数量");
+            ToastUtil.showShortToast(MyApplication.myApplication, "请填写数量");
             return;
         }
 
@@ -448,7 +470,7 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
             int dispatched = Integer.parseInt(dispatched_qty);
 
             if (dispatched > ordered_qty) {
-                ToastUtil.showLongToast(getContext(), "出库数量不能大于库存数量");
+                ToastUtil.showShortToast(getContext(), "出库数量不能大于库存数量");
                 return;
             }
 

@@ -50,6 +50,7 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
     private String barcodeStr;
     private Button chooseWarehouse;
     private Button confirm;
+    private Button clearContent;
     private Button showOrder;
     private String warehousesId;
     private View root;
@@ -89,8 +90,8 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
                         for (int i = 0; i < dispatched.length(); i++) {
                             qualified_qty += dispatched.getJSONObject(i).getInt("qty");
                         }
-                        setTextEditTextById(R.id.qualified_qty, (currentOrder.getJSONObject("ordered").getInt("ordered_qty") - qualified_qty) + "");
-
+                        EditText tt = setTextEditTextById(R.id.qualified_qty, (currentOrder.getJSONObject("ordered").getInt("ordered_qty") - qualified_qty) + "");
+                        tt.setEnabled(false);
                     } catch (Exception e) {
                     }
                 }
@@ -106,6 +107,29 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
             @Override
             public void onClick(View v) {
                 instock();
+            }
+        });
+        clearContent = (Button) root.findViewById(R.id.clear);
+        clearContent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setTextEditTextById(R.id.product_barcode_primary, "");
+                setTextEditTextById(R.id.product_barcode_secondary, "");
+                setTextEditTextById(R.id.hospital_barcode_primary, "");
+                setTextEditTextById(R.id.hospital_barcode_secondary, "");
+                setTextEditTextById(R.id.product_huohao, "");
+                setTextEditTextById(R.id.product_name, "");
+                setTextEditTextById(R.id.product_size, "");
+                setTextEditTextById(R.id.product_fdacode, "");
+                setTextEditTextById(R.id.product_fdaexpire, "");
+                setTextEditTextById(R.id.supplier_name, "");
+                setTextEditTextById(R.id.order_qty, "");
+                setTextEditTextById(R.id.qualified_qty, "");
+                setTextEditTextById(R.id.dispatched_qty, "");
+                setTextEditTextById(R.id.LOT, "");
+                setTextEditTextById(R.id.expire, "");
+                orders = (Spinner) root.findViewById(R.id.orders);
+                orders.setAdapter(null);
             }
         });
         showOrder = (Button) root.findViewById(R.id.show_order);
@@ -142,7 +166,7 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
     }
     private void getWarehouses() {
         if (!CheckNetWorkUtils.updateConnectedFlags(MyApplication.myApplication)) {
-            ToastUtil.showLongToast(MyApplication.myApplication, "网络不可用");
+            ToastUtil.showShortToast(MyApplication.myApplication, "网络不可用");
             return;
         }
 
@@ -210,7 +234,7 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
 
     @Override
     public void onReceiveBarcode(String type, String barcodeStr) {
-        //ToastUtil.showLongToast(MyApplication.myApplication, type + ":" + barcodeStr);
+        //ToastUtil.showShortToast(MyApplication.myApplication, type + ":" + barcodeStr);
 
         ArrayList<NameValuePair> list;
         EditText editText;
@@ -391,11 +415,11 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
                     if (progressDialog != null && progressDialog.isShowing())
                         progressDialog.dismiss();
 
-                    ToastUtil.showShortToast(getContext(),res );
+//                    ToastUtil.showShortToast(getContext(),res );
                     try {
                         JSONObject jsonObject = new JSONObject(res);
                         if (jsonObject.getBoolean("dispatch")) {
-                            ToastUtil.showLongToast(getContext(), "提交服务器成功");
+                            ToastUtil.showShortToast(getContext(), "提交服务器成功");
                             setTextEditTextById(R.id.product_barcode_primary, "");
                             setTextEditTextById(R.id.product_barcode_secondary, "");
                             setTextEditTextById(R.id.hospital_barcode_primary, "");
@@ -410,18 +434,18 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
                             setTextEditTextById(R.id.expire, "");
                             ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.list_item, R.id.text);
                             orders.setAdapter(adapter);
-                            chooseWarehouse.setText("选择仓库");
+//                            chooseWarehouse.setText("选择仓库");
                             setTextEditTextById(R.id.order_qty, "");
                             setTextEditTextById(R.id.qualified_qty, "");
                             setTextEditTextById(R.id.dispatched_qty, "");
                             currentOrder = null;
                         } else {
-                            ToastUtil.showLongToast(getContext(), "提交服务器失败");
+                            ToastUtil.showShortToast(getContext(), "提交服务器失败");
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-//                    ToastUtil.showLongToast(getContext(), res);
+//                    ToastUtil.showShortToast(getContext(), res);
                     break;
                 case 3:
                     try {
@@ -439,7 +463,7 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
 
     private void searchProductByCode() {
         if (!CheckNetWorkUtils.updateConnectedFlags(MyApplication.myApplication)) {
-            ToastUtil.showLongToast(MyApplication.myApplication, "网络不可用");
+            ToastUtil.showShortToast(MyApplication.myApplication, "网络不可用");
             return;
         }
         progressDialog = ProgressDialog.show(this.getContext(), // context
@@ -461,7 +485,19 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
 
     private void instock() {
         if (!CheckNetWorkUtils.updateConnectedFlags(MyApplication.myApplication)) {
-            ToastUtil.showLongToast(MyApplication.myApplication, "网络不可用");
+            ToastUtil.showShortToast(MyApplication.myApplication, "网络不可用");
+            return;
+        }
+        EditText LOTEdit = (EditText) root.findViewById(R.id.LOT);
+        final String LOT = LOTEdit.getText().toString();
+        if (LOT == null || LOT.equals("")) {
+            ToastUtil.showShortToast(getContext(), "请填写LOT");
+            return;
+        }
+        EditText expire = (EditText) root.findViewById(R.id.expire);
+        final String dtStart = expire.getText().toString();
+        if (dtStart == null || dtStart.equals("")) {
+            ToastUtil.showShortToast(getContext(), "请填写LOT过期日期");
             return;
         }
         try {
@@ -476,11 +512,11 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
 
             int dispatched = Integer.parseInt(dispatched_qty);
             if (dispatched > qualifiedInt) {
-                ToastUtil.showLongToast(getContext(), "入库数量不能大于质检数量");
+                ToastUtil.showShortToast(getContext(), "入库数量不能大于质检数量");
                 return;
             }
             if (dispatched > ordered_qty) {
-                ToastUtil.showLongToast(getContext(), "入库数量不能大于订单数量");
+                ToastUtil.showShortToast(getContext(), "入库数量不能大于订单数量");
                 return;
             }
 
@@ -505,6 +541,7 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
                     String dispatched_qty = dispatchedEdit.getText().toString();
                     EditText LOTEdit = (EditText) root.findViewById(R.id.LOT);
                     String LOT = LOTEdit.getText().toString();
+                    String comment = ((EditText) root.findViewById(R.id.supplier_name)).getText().toString();
                     int ordered_qty = currentOrder.getJSONObject("ordered").getInt("ordered_qty");
                     JSONArray qualified = currentOrder.getJSONArray("qualified");
                     int qualifiedInt = 0;
@@ -517,7 +554,7 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
                         JSONObject qualifyDetial = qualified.getJSONObject(0);
                         qualified_rowid = qualifyDetial.getString("qualified_rowid");
                     }
-                    res = dao.instock(warehousesId, product_id, dtStart, det_rowid, qualified_rowid, order_id, pu, dispatched_qty, remain_qty, LOT);
+                    res = dao.instock(warehousesId, product_id, dtStart, det_rowid, qualified_rowid, order_id, pu, dispatched_qty, remain_qty, LOT, comment);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

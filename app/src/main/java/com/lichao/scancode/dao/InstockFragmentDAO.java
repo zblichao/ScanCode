@@ -24,7 +24,7 @@ public class InstockFragmentDAO extends CommonDAO {
      * @param LOT（lot）
      * @return
      */
-    public String  instock(String warehouse_id,String product_id, String dtStart, String det_rowid,String qualified_rowid ,String order_id, String pu, String dispatch_qty,String remain_qty, String LOT) {
+    public String  instock(String warehouse_id,String product_id, String dtStart, String det_rowid,String qualified_rowid ,String order_id, String pu, String dispatch_qty,String remain_qty, String LOT, String comment) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 
@@ -51,6 +51,7 @@ public class InstockFragmentDAO extends CommonDAO {
         nameValuePairs.add(new NameValuePair("qty_0_0", dispatch_qty));
         nameValuePairs.add(new NameValuePair("qty_remain_0_0", dispatch_qty));
         nameValuePairs.add(new NameValuePair("entrepot_0_0", warehouse_id));
+        nameValuePairs.add(new NameValuePair("comment", comment));
         nameValuePairs.add(new NameValuePair("mobile", "1"));
 
         String res = "";

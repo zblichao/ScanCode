@@ -49,6 +49,7 @@ public class CorrespondenceFragment extends Fragment implements BarcodeReceiver 
     private String barcodeStr;
     private Button chooseWarehouse;
     private Button confirm;
+    private Button clearContent;
     private String warehousesId;
     private View root;
     private JSONArray jsonOrders;
@@ -70,6 +71,19 @@ public class CorrespondenceFragment extends Fragment implements BarcodeReceiver 
             @Override
             public void onClick(View v) {
                 qualify();
+            }
+        });
+
+        clearContent = (Button) root.findViewById(R.id.clear);
+        clearContent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setTextEditTextById(R.id.product_barcode_primary, "");
+                setTextEditTextById(R.id.hospital_barcode_primary, "");
+                setTextEditTextById(R.id.product_name, "");
+                setTextEditTextById(R.id.product_size, "");
+                setTextEditTextById(R.id.product_fdacode, "");
+                setTextEditTextById(R.id.product_fdaexpire, "");
             }
         });
 
@@ -228,7 +242,7 @@ public class CorrespondenceFragment extends Fragment implements BarcodeReceiver 
                     try {
                         JSONObject jsonObject = new JSONObject(res);
                         if (jsonObject.getBoolean("qualify")) {
-                            ToastUtil.showLongToast(getContext(), "提交服务器成功");
+                            ToastUtil.showShortToast(getContext(), "提交服务器成功");
                             setTextEditTextById(R.id.product_barcode_primary, "");
                             setTextEditTextById(R.id.hospital_barcode_primary, "");
                             setTextEditTextById(R.id.product_name, "");
@@ -239,12 +253,12 @@ public class CorrespondenceFragment extends Fragment implements BarcodeReceiver 
                             chooseWarehouse.setText("选择仓库");
                             currentOrder = null;
                         } else {
-                            ToastUtil.showLongToast(getContext(), "提交服务器失败");
+                            ToastUtil.showShortToast(getContext(), "提交服务器失败");
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-//                    ToastUtil.showLongToast(getContext(), res);
+//                    ToastUtil.showShortToast(getContext(), res);
                     break;
             }
         }
@@ -252,7 +266,7 @@ public class CorrespondenceFragment extends Fragment implements BarcodeReceiver 
 
     private void searchProductByCode() {
         if (!CheckNetWorkUtils.updateConnectedFlags(MyApplication.myApplication)) {
-            ToastUtil.showLongToast(MyApplication.myApplication, "网络不可用");
+            ToastUtil.showShortToast(MyApplication.myApplication, "网络不可用");
             return;
         }
         progressDialog = ProgressDialog.show(this.getContext(), // context
@@ -274,7 +288,7 @@ public class CorrespondenceFragment extends Fragment implements BarcodeReceiver 
 
     private void qualify() {
         if (!CheckNetWorkUtils.updateConnectedFlags(MyApplication.myApplication)) {
-            ToastUtil.showLongToast(MyApplication.myApplication, "网络不可用");
+            ToastUtil.showShortToast(MyApplication.myApplication, "网络不可用");
             return;
         }
         EditText productEdit = (EditText) root.findViewById(R.id.product_barcode_primary);

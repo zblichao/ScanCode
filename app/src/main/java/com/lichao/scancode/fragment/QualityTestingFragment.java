@@ -49,6 +49,7 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
     private String barcodeStr;
     private Button chooseWarehouse;
     private Button confirm;
+    private Button clearContent;
     private Button showOrder;
     private String warehousesId;
     private View root;
@@ -98,6 +99,29 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
             @Override
             public void onClick(View v) {
                 qualify();
+            }
+        });
+
+        clearContent = (Button) root.findViewById(R.id.clear);
+        clearContent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setTextEditTextById(R.id.product_barcode_primary, "");
+                setTextEditTextById(R.id.product_barcode_secondary, "");
+                setTextEditTextById(R.id.hospital_barcode_primary, "");
+                setTextEditTextById(R.id.hospital_barcode_secondary, "");
+                setTextEditTextById(R.id.product_huohao, "");
+                setTextEditTextById(R.id.product_name, "");
+                setTextEditTextById(R.id.product_size, "");
+                setTextEditTextById(R.id.LOT, "");
+                setTextEditTextById(R.id.expire, "");
+                setTextEditTextById(R.id.product_fdacode, "");
+                setTextEditTextById(R.id.product_fdaexpire, "");
+                setTextEditTextById(R.id.supplier_name, "");
+                setTextEditTextById(R.id.order_qty, "");
+                setTextEditTextById(R.id.qualified_qty, "");
+                orders = (Spinner) root.findViewById(R.id.orders);
+                orders.setAdapter(null);
             }
         });
 
@@ -355,7 +379,7 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
                     try {
                         JSONObject jsonObject = new JSONObject(res);
                         if (jsonObject.getBoolean("qualify")) {
-                            ToastUtil.showLongToast(getContext(), "提交服务器成功");
+                            ToastUtil.showShortToast(getContext(), "提交服务器成功");
                             setTextEditTextById(R.id.product_barcode_primary, "");
                             setTextEditTextById(R.id.product_barcode_secondary, "");
                             setTextEditTextById(R.id.hospital_barcode_primary, "");
@@ -375,12 +399,12 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
                             setTextEditTextById(R.id.qualified_qty, "");
                             currentOrder = null;
                         } else {
-                            ToastUtil.showLongToast(getContext(), "提交服务器失败");
+                            ToastUtil.showShortToast(getContext(), "提交服务器失败");
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-//                    ToastUtil.showLongToast(getContext(), res);
+//                    ToastUtil.showShortToast(getContext(), res);
                     break;
             }
         }
@@ -388,7 +412,7 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
 
     private void searchProductByCode() {
         if (!CheckNetWorkUtils.updateConnectedFlags(MyApplication.myApplication)) {
-            ToastUtil.showLongToast(MyApplication.myApplication, "网络不可用");
+            ToastUtil.showShortToast(MyApplication.myApplication, "网络不可用");
             return;
         }
         progressDialog = ProgressDialog.show(this.getContext(), // context
@@ -410,7 +434,7 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
 
     private void qualify() {
         if (!CheckNetWorkUtils.updateConnectedFlags(MyApplication.myApplication)) {
-            ToastUtil.showLongToast(MyApplication.myApplication, "网络不可用");
+            ToastUtil.showShortToast(MyApplication.myApplication, "网络不可用");
             return;
         }
         EditText LOTEdit = (EditText) root.findViewById(R.id.LOT);
