@@ -148,7 +148,7 @@ public class CorrespondenceFragment extends Fragment implements BarcodeReceiver 
                 editText.setEnabled(false);
                 if (progressDialog != null && progressDialog.isShowing())
                     return;
-                searchProductByCode();
+//                searchProductByCode();
                 break;
             case "code128-S":
                 break;
@@ -158,7 +158,7 @@ public class CorrespondenceFragment extends Fragment implements BarcodeReceiver 
                 editText.setEnabled(false);
                 if (progressDialog != null && progressDialog.isShowing())
                     return;
-                searchProductByCode();
+//                searchProductByCode();
                 break;
             case "HIBC-P":
                 this.barcodeStr = barcodeStr;
@@ -166,7 +166,7 @@ public class CorrespondenceFragment extends Fragment implements BarcodeReceiver 
                 editText.setEnabled(false);
                 if (progressDialog != null && progressDialog.isShowing())
                     return;
-                searchProductByCode();
+//                searchProductByCode();
                 break;
             case "HIBC-S":
                 break;
@@ -176,7 +176,7 @@ public class CorrespondenceFragment extends Fragment implements BarcodeReceiver 
                 editText.setEnabled(false);
                 if (progressDialog != null && progressDialog.isShowing())
                     return;
-                searchProductByCode();
+//                searchProductByCode();
                 break;
             case "hospital-P":
                 this.barcodeStr = barcodeStr.split("\\*")[0];

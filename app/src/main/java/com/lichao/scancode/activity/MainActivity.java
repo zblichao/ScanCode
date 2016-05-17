@@ -15,6 +15,7 @@ import com.lichao.scancode.MyApplication;
 import com.lichao.scancode.R;
 import com.lichao.scancode.fragment.CheckOrderFragment;
 import com.lichao.scancode.fragment.CorrespondenceFragment;
+import com.lichao.scancode.fragment.CountingFragment;
 import com.lichao.scancode.fragment.DirectOutstockFragment;
 import com.lichao.scancode.fragment.InstockFragment;
 import com.lichao.scancode.fragment.OutstockFragment;
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity
     private DirectOutstockFragment directOutstockFragment;
     private QualityTestingFragment qualityTestingFragment;
     private CorrespondenceFragment correspondenceFragment;
+    private CountingFragment countingFragment;
     private Toolbar toolbar;
     private String currentMenuItem;
     public  final static String SCAN_ACTION = "urovo.rcv.message";//扫描结束action
@@ -56,15 +58,17 @@ public class MainActivity extends AppCompatActivity
        // navigationView.inflateMenu(R.menu.activity_main_drawer);
         try {
             JSONObject permission = new JSONObject(MyApplication.myApplication.getUser().getPermission());
-            if(permission.getBoolean("qualify"))
+//            if(permission.getBoolean("qualify"))
             navigationView.getMenu().add("质检");
-            navigationView.getMenu().add("条码对应");
             //if(permission.getBoolean(""))
             navigationView.getMenu().add("入库");
             // if(permission.getBoolean(""))
             navigationView.getMenu().add("扫码出库");
 
-            navigationView.getMenu().add("出库");
+            navigationView.getMenu().add("条码对应");
+            navigationView.getMenu().add("盘库");
+
+//            navigationView.getMenu().add("出库");
 
             //if(permission.getBoolean(""))
             navigationView.getMenu().add("查看订单");
@@ -84,6 +88,8 @@ public class MainActivity extends AppCompatActivity
         qualityTestingFragment.setScanBroadcastReceiver(scanBroadcastReceiver);
         correspondenceFragment = new CorrespondenceFragment();
         correspondenceFragment.setScanBroadcastReceiver(scanBroadcastReceiver);
+        countingFragment = new CountingFragment();
+        countingFragment.setScanBroadcastReceiver(scanBroadcastReceiver);
 
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fragment_container, checkOrderFragment)
@@ -92,9 +98,11 @@ public class MainActivity extends AppCompatActivity
                 .add(R.id.fragment_container, qualityTestingFragment)
                 .add(R.id.fragment_container, directOutstockFragment)
                 .add(R.id.fragment_container, correspondenceFragment)
+                .add(R.id.fragment_container, countingFragment)
                 .hide(instockFragment)
                 .hide(directOutstockFragment)
                 .hide(outstockFragment)
+                .hide(countingFragment)
                 .hide(correspondenceFragment)
                 .show(qualityTestingFragment)
                 .hide(checkOrderFragment)
@@ -142,6 +150,9 @@ public class MainActivity extends AppCompatActivity
                 case "条码对应":
                     correspondenceFragment.onReceiveBarcode(type, barcodeStr);
                     break;
+                case "盘库":
+                    countingFragment.onReceiveBarcode(type, barcodeStr);
+                    break;
             }
         }
     };
@@ -171,6 +182,7 @@ public class MainActivity extends AppCompatActivity
                 trx.hide(outstockFragment);
                 trx.hide(qualityTestingFragment);
                 trx.hide(directOutstockFragment);
+                trx.hide(countingFragment);
                 trx.show(checkOrderFragment);
                 trx.hide(correspondenceFragment);
                 toolbar.setTitle("查看订单");
@@ -180,6 +192,7 @@ public class MainActivity extends AppCompatActivity
                 trx.show(outstockFragment);
                 trx.hide(qualityTestingFragment);
                 trx.hide(directOutstockFragment);
+                trx.hide(countingFragment);
                 trx.hide(checkOrderFragment);
                 trx.hide(correspondenceFragment);
                 toolbar.setTitle("出库");
@@ -189,6 +202,7 @@ public class MainActivity extends AppCompatActivity
                 trx.hide(outstockFragment);
                 trx.hide(qualityTestingFragment);
                 trx.hide(directOutstockFragment);
+                trx.hide(countingFragment);
                 trx.hide(checkOrderFragment);
                 trx.hide(correspondenceFragment);
                 toolbar.setTitle("入库");
@@ -198,6 +212,7 @@ public class MainActivity extends AppCompatActivity
                 trx.hide(outstockFragment);
                 trx.show(qualityTestingFragment);
                 trx.hide(directOutstockFragment);
+                trx.hide(countingFragment);
                 trx.hide(checkOrderFragment);
                 trx.hide(correspondenceFragment);
                 toolbar.setTitle("质检");
@@ -207,6 +222,7 @@ public class MainActivity extends AppCompatActivity
                 trx.hide(outstockFragment);
                 trx.hide(qualityTestingFragment);
                 trx.show(directOutstockFragment);
+                trx.hide(countingFragment);
                 trx.hide(checkOrderFragment);
                 trx.hide(correspondenceFragment);
                 toolbar.setTitle("扫码出库");
@@ -216,9 +232,20 @@ public class MainActivity extends AppCompatActivity
                 trx.hide(outstockFragment);
                 trx.hide(qualityTestingFragment);
                 trx.show(correspondenceFragment);
+                trx.hide(countingFragment);
                 trx.hide(directOutstockFragment);
                 trx.hide(checkOrderFragment);
                 toolbar.setTitle("条码对应");
+                break;
+            case "盘库":
+                trx.hide(instockFragment);
+                trx.hide(outstockFragment);
+                trx.hide(qualityTestingFragment);
+                trx.show(countingFragment);
+                trx.hide(correspondenceFragment);
+                trx.hide(directOutstockFragment);
+                trx.hide(checkOrderFragment);
+                toolbar.setTitle("盘库");
         }
         trx.commit();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

@@ -23,7 +23,7 @@ import com.lichao.scancode.MyApplication;
 import com.lichao.scancode.R;
 import com.lichao.scancode.activity.ChooseWarehousesActivity;
 import com.lichao.scancode.activity.OrderDetailActivity;
-import com.lichao.scancode.dao.InstockFragmentDAO;
+import com.lichao.scancode.dao.CountingFragmentDAO;
 import com.lichao.scancode.entity.NameValuePair;
 import com.lichao.scancode.receiver.BarcodeReceiver;
 import com.lichao.scancode.receiver.EAN128Parser;
@@ -41,9 +41,9 @@ import java.util.ArrayList;
 /**
  * Created by zblichao on 2016-03-10.
  */
-public class InstockFragment extends Fragment implements BarcodeReceiver {
+public class CountingFragment extends Fragment implements BarcodeReceiver {
     private ScanBroadcastReceiver scanBroadcastReceiver;
-    private InstockFragmentDAO dao;
+    private CountingFragmentDAO dao;
     private ProgressDialog progressDialog;
     private String res;
     private String allWarehouses;
@@ -54,7 +54,6 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
     private Button showOrder;
     private String warehousesId;
     private View root;
-    private Spinner orders;
     private JSONArray jsonOrders;
     private JSONObject currentOrder;
     private JSONObject jsonProduct;
@@ -68,40 +67,7 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        root = inflater.inflate(R.layout.fragment_instock, container, false);
-        orders = (Spinner) root.findViewById(R.id.orders);
-        orders.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (jsonOrders != null && jsonOrders.length() > position) {
-                    try {
-                        currentOrder = jsonOrders.getJSONObject(position);
-                        setTextEditTextById(R.id.order_qty, "ordered_qty", currentOrder.getJSONObject("ordered"));
-                        setTextEditTextById(R.id.supplier_name, "supplier_name", currentOrder);
-                        JSONArray qualified = currentOrder.getJSONArray("qualified");
-                        if (qualified.length() > 0) {
-                            JSONObject qualifyDetial = qualified.getJSONObject(0);
-                            setTextEditTextById(R.id.LOT, "LOT", qualifyDetial);
-                            setTextEditTextById(R.id.expire, "expire", qualifyDetial);
-                        }
-
-                        JSONArray dispatched = currentOrder.getJSONArray("dispatched");
-                        int qualified_qty = 0;
-                        for (int i = 0; i < dispatched.length(); i++) {
-                            qualified_qty += dispatched.getJSONObject(i).getInt("qty");
-                        }
-                        EditText tt = setTextEditTextById(R.id.qualified_qty, (currentOrder.getJSONObject("ordered").getInt("ordered_qty") - qualified_qty) + "");
-                        tt.setEnabled(false);
-                    } catch (Exception e) {
-                    }
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
+        root = inflater.inflate(R.layout.fragment_counting, container, false);
         confirm = (Button) root.findViewById(R.id.confirm);
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,41 +79,18 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
         clearContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setTextEditTextById(R.id.product_barcode_primary, "");
-                setTextEditTextById(R.id.product_barcode_secondary, "");
                 setTextEditTextById(R.id.hospital_barcode_primary, "");
                 setTextEditTextById(R.id.hospital_barcode_secondary, "");
                 setTextEditTextById(R.id.product_name, "");
                 setTextEditTextById(R.id.product_size, "");
                 setTextEditTextById(R.id.product_fdacode, "");
                 setTextEditTextById(R.id.product_fdaexpire, "");
-                setTextEditTextById(R.id.supplier_name, "");
-                setTextEditTextById(R.id.order_qty, "");
-                setTextEditTextById(R.id.qualified_qty, "");
                 setTextEditTextById(R.id.dispatched_qty, "");
                 setTextEditTextById(R.id.LOT, "");
                 setTextEditTextById(R.id.expire, "");
-                orders = (Spinner) root.findViewById(R.id.orders);
-                orders.setAdapter(null);
             }
         });
-        showOrder = (Button) root.findViewById(R.id.show_order);
-        showOrder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (currentOrder != null) {
-                    Intent intent = new Intent(getContext(), OrderDetailActivity.class);
-                    try {
-                        intent.putExtra("id", currentOrder.getString("order_id"));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    startActivity(intent);
-                } else {
-                    ToastUtil.showShortToast(getContext(), "请扫码并选择订单");
-                }
-            }
-        });
+
         chooseWarehouse = (Button) root.findViewById(R.id.chooseWarehouse);
         chooseWarehouse.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -157,8 +100,8 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
                 startActivityForResult(intent, 1);
             }
         });
-        dao = new InstockFragmentDAO();
-         getWarehouses();
+        dao = new CountingFragmentDAO();
+        getWarehouses();
         //searchProductByCode();
 
         return root;
@@ -195,22 +138,16 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
             EditText dispatched_qty = (EditText) root.findViewById(R.id.dispatched_qty);
             dispatched_qty.requestFocus();
 
-            setTextEditTextById(R.id.product_barcode_primary, "");
-            setTextEditTextById(R.id.product_barcode_secondary, "");
             setTextEditTextById(R.id.hospital_barcode_primary, "");
             setTextEditTextById(R.id.hospital_barcode_secondary, "");
             setTextEditTextById(R.id.product_name, "");
             setTextEditTextById(R.id.product_fdacode, "");
             setTextEditTextById(R.id.product_fdaexpire, "");
             setTextEditTextById(R.id.product_size, "");
-            setTextEditTextById(R.id.supplier_name, "");
             setTextEditTextById(R.id.LOT, "");
             setTextEditTextById(R.id.expire, "");
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.list_item, R.id.text);
-            orders.setAdapter(adapter);
 
-            setTextEditTextById(R.id.order_qty, "");
-            setTextEditTextById(R.id.qualified_qty, "");
             setTextEditTextById(R.id.dispatched_qty, "");
             currentOrder = null;
         }
@@ -237,88 +174,6 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
         ArrayList<NameValuePair> list;
         EditText editText;
         switch (type) {
-            case "code128-P":
-                this.barcodeStr = barcodeStr;
-                editText = setTextEditTextById(R.id.product_barcode_primary, barcodeStr);
-                editText.setEnabled(false);
-                if (progressDialog != null && progressDialog.isShowing())
-                    return;
-                searchProductByCode();
-                break;
-            case "code128-S":
-                this.barcodeStr = barcodeStr;
-                editText = setTextEditTextById(R.id.product_barcode_secondary, barcodeStr);
-                editText.setEnabled(false);
-                try {
-                    list = ean128Parser.parseBarcodeToList(barcodeStr);
-                    for (int i = 0; i < list.size(); i++) {
-                        if (list.get(i).getName().equals("LOT")) {
-                            editText = setTextEditTextById(R.id.LOT, list.get(i).getValue());
-                            editText.setEnabled(false);
-                        }
-                        if (list.get(i).getName().equals("expire")) {
-                            editText = setTextEditTextById(R.id.expire, list.get(i).getValue());
-                            editText.setEnabled(false);
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                break;
-            case "code128":
-                this.barcodeStr = barcodeStr.substring(0, 16);
-                editText = setTextEditTextById(R.id.product_barcode_primary, barcodeStr.substring(0, 16));
-                editText.setEnabled(false);
-                editText = setTextEditTextById(R.id.product_barcode_secondary, barcodeStr.substring(16));
-                editText.setEnabled(false);
-                if (progressDialog != null && progressDialog.isShowing())
-                    return;
-                searchProductByCode();
-
-                list = hibcParser.HIBCSecondaryParser(barcodeStr.substring(16));
-                for (int i = 0; i < list.size(); i++) {
-                    if (list.get(i).getName().equals("LOT")) {
-                        editText = setTextEditTextById(R.id.LOT, list.get(i).getValue());
-                        editText.setEnabled(false);
-                    }
-                    if (list.get(i).getName().equals("expire")) {
-                        editText = setTextEditTextById(R.id.expire, list.get(i).getValue());
-                        editText.setEnabled(false);
-                    }
-                }
-                break;
-            case "HIBC-P":
-                this.barcodeStr = barcodeStr;
-                editText = setTextEditTextById(R.id.product_barcode_primary, barcodeStr);
-                editText.setEnabled(false);
-                if (progressDialog != null && progressDialog.isShowing())
-                    return;
-                searchProductByCode();
-                break;
-            case "HIBC-S":
-                this.barcodeStr = barcodeStr;
-                editText = setTextEditTextById(R.id.product_barcode_secondary, barcodeStr);
-                editText.setEnabled(false);
-                list = hibcParser.HIBCSecondaryParser(barcodeStr);
-                for (int i = 0; i < list.size(); i++) {
-                    if (list.get(i).getName().equals("LOT")) {
-                        editText = setTextEditTextById(R.id.LOT, list.get(i).getValue());
-                        editText.setEnabled(false);
-                    }
-                    if (list.get(i).getName().equals("expire")) {
-                        editText = setTextEditTextById(R.id.expire, list.get(i).getValue());
-                        editText.setEnabled(false);
-                    }
-                }
-                break;
-            case "EAN13":
-                this.barcodeStr = barcodeStr;
-                editText = setTextEditTextById(R.id.product_barcode_primary, barcodeStr);
-                editText.setEnabled(false);
-                if (progressDialog != null && progressDialog.isShowing())
-                    return;
-                searchProductByCode();
-                break;
             case "hospital-P":
                 this.barcodeStr = barcodeStr.split("\\*")[0];
                 editText = setTextEditTextById(R.id.hospital_barcode_primary, barcodeStr.split("\\*")[0]);
@@ -355,8 +210,6 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
                             JSONObject jsonRes = new JSONObject(res);
                             jsonProduct = jsonRes.getJSONObject("product");
 
-                            setTextEditTextById(R.id.product_barcode_primary, "product_barcode_primary", jsonProduct);
-                            setTextEditTextById(R.id.product_barcode_secondary, "product_barcode_secondary", jsonProduct);
                             setTextEditTextById(R.id.hospital_barcode_primary, "hospital_barcode_primary", jsonProduct);
                             setTextEditTextById(R.id.hospital_barcode_secondary, "hospital_barcode_secondary", jsonProduct);
                             setTextEditTextById(R.id.product_name, "product_name", jsonProduct);
@@ -370,12 +223,8 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
                             for (int i = 0; i < jsonOrders.length(); i++) {
                                 adapter.add(jsonOrders.getJSONObject(i).getString("order_name"));
                             }
-                            orders.setAdapter(adapter);
                             if (jsonOrders.length() > 0) {
                                 currentOrder = jsonOrders.getJSONObject(0);
-                                setTextEditTextById(R.id.order_qty, "ordered_qty", currentOrder.getJSONObject("ordered"));
-                                setTextEditTextById(R.id.supplier_name, "supplier_name", currentOrder);
-
                                 JSONArray qualified = currentOrder.getJSONArray("qualified");
                                 if (qualified.length() > 0) {
                                     JSONObject qualifyDetial = qualified.getJSONObject(0);
@@ -383,22 +232,11 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
                                     setTextEditTextById(R.id.expire, "expire", qualifyDetial);
                                 }
 
-                                int qualified_qty = 0;
-                                for (int i = 0; i < qualified.length(); i++) {
-                                    qualified_qty += qualified.getJSONObject(i).getInt("qty");
-                                }
-                                EditText tt = setTextEditTextById(R.id.qualified_qty, qualified_qty + "");
-                                tt.setEnabled(false);
                                 JSONArray dispatched = currentOrder.getJSONArray("dispatched");
                                 int dispatched_qty = 0;
                                 for (int i = 0; i < dispatched.length(); i++) {
                                     dispatched_qty += dispatched.getJSONObject(i).getInt("qty");
                                 }
-
-                                EditText editText = setTextEditTextById(R.id.dispatched_qty, (qualified_qty - dispatched_qty) + "");
-                                CharSequence text = editText.getText();
-                                editText.setSelection(text.length());
-
                             }
 
 
@@ -417,22 +255,14 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
                         JSONObject jsonObject = new JSONObject(res);
                         if (jsonObject.getBoolean("dispatch")) {
                             ToastUtil.showShortToast(getContext(), "提交服务器成功");
-                            setTextEditTextById(R.id.product_barcode_primary, "");
-                            setTextEditTextById(R.id.product_barcode_secondary, "");
                             setTextEditTextById(R.id.hospital_barcode_primary, "");
                             setTextEditTextById(R.id.hospital_barcode_secondary, "");
                             setTextEditTextById(R.id.product_name, "");
                             setTextEditTextById(R.id.product_fdacode, "");
                             setTextEditTextById(R.id.product_fdaexpire, "");
                             setTextEditTextById(R.id.product_size, "");
-                            setTextEditTextById(R.id.supplier_name, "");
                             setTextEditTextById(R.id.LOT, "");
                             setTextEditTextById(R.id.expire, "");
-                            ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.list_item, R.id.text);
-                            orders.setAdapter(adapter);
-//                            chooseWarehouse.setText("选择仓库");
-                            setTextEditTextById(R.id.order_qty, "");
-                            setTextEditTextById(R.id.qualified_qty, "");
                             setTextEditTextById(R.id.dispatched_qty, "");
                             currentOrder = null;
                         } else {
@@ -496,28 +326,13 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
             ToastUtil.showShortToast(getContext(), "请填写LOT过期日期");
             return;
         }
-        try {
-            EditText dispatchedEdit = (EditText) root.findViewById(R.id.dispatched_qty);
-            String dispatched_qty = dispatchedEdit.getText().toString();
-            int ordered_qty = currentOrder.getJSONObject("ordered").getInt("ordered_qty");
-            JSONArray qualified = currentOrder.getJSONArray("qualified");
-            int qualifiedInt = 0;
-            for (int i = 0; i < qualified.length(); i++) {
-                qualifiedInt += qualified.getJSONObject(i).getInt("qty");
-            }
-
-            int dispatched = Integer.parseInt(dispatched_qty);
-            if (dispatched > qualifiedInt) {
-                ToastUtil.showShortToast(getContext(), "入库数量不能大于质检数量");
-                return;
-            }
-            if (dispatched > ordered_qty) {
-                ToastUtil.showShortToast(getContext(), "入库数量不能大于订单数量");
-                return;
-            }
-
-        } catch (Exception e) {
+        EditText qty = (EditText) root.findViewById(R.id.dispatched_qty);
+        final String qty_string = qty.getText().toString();
+        if (qty_string == null || qty_string.equals("")) {
+            ToastUtil.showShortToast(getContext(), "请填写数量");
+            return;
         }
+
         progressDialog = ProgressDialog.show(this.getContext(), // context
                 "", // title
                 "Loading. Please wait...", // message
@@ -526,34 +341,12 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
             @Override
             public void run() {
                 super.run();
-                try {
-                    String product_id = jsonProduct.getString("rowid");
-                    EditText expire = (EditText) root.findViewById(R.id.expire);
-                    String dtStart = expire.getText().toString();
-                    String det_rowid = currentOrder.getJSONObject("ordered").getString("det_rowid");
-                    String order_id = currentOrder.getString("order_id");
-                    String pu = currentOrder.getString("pu");
-                    EditText dispatchedEdit = (EditText) root.findViewById(R.id.dispatched_qty);
-                    String dispatched_qty = dispatchedEdit.getText().toString();
-                    EditText LOTEdit = (EditText) root.findViewById(R.id.LOT);
-                    String LOT = LOTEdit.getText().toString();
-                    String comment = ((EditText) root.findViewById(R.id.supplier_name)).getText().toString();
-                    int ordered_qty = currentOrder.getJSONObject("ordered").getInt("ordered_qty");
-                    JSONArray qualified = currentOrder.getJSONArray("qualified");
-                    int qualifiedInt = 0;
-                    for (int i = 0; i < qualified.length(); i++) {
-                        qualifiedInt += qualified.getJSONObject(i).getInt("qty");
-                    }
-                    String remain_qty = (ordered_qty - qualifiedInt) + "";
-                    String qualified_rowid = "";
-                    if (qualified.length() > 0) {
-                        JSONObject qualifyDetial = qualified.getJSONObject(0);
-                        qualified_rowid = qualifyDetial.getString("qualified_rowid");
-                    }
-                    res = dao.instock(warehousesId, product_id, dtStart, det_rowid, qualified_rowid, order_id, pu, dispatched_qty, remain_qty, LOT, comment);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                String barcode = ((EditText) root.findViewById(R.id.hospital_barcode_primary)).getText().toString();
+                String LOT = ((EditText) root.findViewById(R.id.LOT)).getText().toString();
+                String expire = ((EditText) root.findViewById(R.id.expire)).getText().toString();
+                String qty = ((EditText) root.findViewById(R.id.dispatched_qty)).getText().toString();
+                res = dao.instock(barcode, LOT, expire, warehousesId, qty);
+
                 Message msg = handler.obtainMessage();
                 msg.arg1 = 2;
                 msg.sendToTarget();
