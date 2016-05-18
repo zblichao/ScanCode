@@ -366,7 +366,6 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
 
                             jsonOrders = jsonRes.getJSONArray("details");
                             ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.list_item, R.id.text);
-                            ;
                             for (int i = 0; i < jsonOrders.length(); i++) {
                                 adapter.add(jsonOrders.getJSONObject(i).getString("order_name"));
                             }

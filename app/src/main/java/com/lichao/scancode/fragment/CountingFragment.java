@@ -51,7 +51,9 @@ public class CountingFragment extends Fragment implements BarcodeReceiver {
     private Button chooseWarehouse;
     private Button confirm;
     private Button clearContent;
+    private Spinner plusMinus;
     private Button showOrder;
+    private int movement;
     private String warehousesId;
     private View root;
     private JSONArray jsonOrders;
@@ -68,6 +70,25 @@ public class CountingFragment extends Fragment implements BarcodeReceiver {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_counting, container, false);
+
+        plusMinus = (Spinner) root.findViewById(R.id.plus_minus);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.list_item, R.id.text);
+        adapter.add("增加库存");
+        adapter.add("减少库存");
+        plusMinus.setAdapter(adapter);
+
+        plusMinus.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                movement = position;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
         confirm = (Button) root.findViewById(R.id.confirm);
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -345,7 +366,9 @@ public class CountingFragment extends Fragment implements BarcodeReceiver {
                 String LOT = ((EditText) root.findViewById(R.id.LOT)).getText().toString();
                 String expire = ((EditText) root.findViewById(R.id.expire)).getText().toString();
                 String qty = ((EditText) root.findViewById(R.id.dispatched_qty)).getText().toString();
-                res = dao.instock(barcode, LOT, expire, warehousesId, qty);
+                res = dao.instock(barcode, LOT, expire, warehousesId, qty, movement);
+
+                System.out.println(res);
 
                 Message msg = handler.obtainMessage();
                 msg.arg1 = 2;

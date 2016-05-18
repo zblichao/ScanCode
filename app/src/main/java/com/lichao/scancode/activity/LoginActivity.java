@@ -52,6 +52,7 @@ public class LoginActivity extends BaseActivity {
                     if (progressDialog != null && progressDialog.isShowing())
                         progressDialog.dismiss();
 
+//                    ToastUtil.showLongToast(LoginActivity.this, res);
                     try {
                         if (res != null && !res.equals("")) {
                             JSONObject resJson = new JSONObject(res);
