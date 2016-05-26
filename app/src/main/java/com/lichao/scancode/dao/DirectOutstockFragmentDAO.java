@@ -29,8 +29,6 @@ public class DirectOutstockFragmentDAO extends CommonDAO {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
         return res;
     }
 
