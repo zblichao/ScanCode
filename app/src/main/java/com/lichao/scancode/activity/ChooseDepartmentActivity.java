@@ -76,8 +76,7 @@ public class ChooseDepartmentActivity extends AppCompatActivity {
                 return false;
             }
         });
-        searchView.setIconified ( false ) ;
-        getWindow ( ) . setSoftInputMode ( WindowManager. LayoutParams . SOFT_INPUT_ADJUST_RESIZE
-                | WindowManager . LayoutParams . SOFT_INPUT_STATE_VISIBLE ) ;
+        searchView.setIconified(false);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE | WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
     }
 }
