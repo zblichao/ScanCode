@@ -4,8 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SearchView;
 
@@ -14,7 +14,6 @@ import com.lichao.scancode.adapter.DepartmentAdapter;
 import com.lichao.scancode.fragment.InstockFragment;
 import com.lichao.scancode.util.JSONHelper;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -77,6 +76,8 @@ public class ChooseDepartmentActivity extends AppCompatActivity {
                 return false;
             }
         });
-
+        searchView.setIconified ( false ) ;
+        getWindow ( ) . setSoftInputMode ( WindowManager. LayoutParams . SOFT_INPUT_ADJUST_RESIZE
+                | WindowManager . LayoutParams . SOFT_INPUT_STATE_VISIBLE ) ;
     }
 }
