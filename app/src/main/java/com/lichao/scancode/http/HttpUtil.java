@@ -18,8 +18,8 @@ import java.util.List;
  */
 public class HttpUtil {
 
-    public static String uriAPI = "http://172.30.85.69:8080/";
-//    public static String uriAPI = "http://101.200.163.4/";
+//    public static String uriAPI = "http://172.30.85.69:8080/";
+    public static String uriAPI = "http://101.200.163.4/";
 
     public static String Post(String urlString,
                               List<NameValuePair> param) throws  IOException {
