@@ -573,10 +573,12 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
                         qualifiedInt += qualified.getJSONObject(i).getInt("qty");
                     }
                     String remain_qty = (ordered_qty - qualifiedInt) + "";
+
                     String qualified_rowid = "";
-                    if (qualified.length() > 0) {
-                        JSONObject qualifyDetial = qualified.getJSONObject(0);
-                        qualified_rowid = qualifyDetial.getString("qualified_rowid");
+                    for (int i = 0; i < qualified.length(); i++) {
+                        if (qualified.getJSONObject(i).getString("LOT").toString().equals(LOT)){
+                            qualified_rowid = qualified.getJSONObject(i).getString("qualified_rowid").toString();
+                        }
                     }
 
                     res = dao.instock(warehousesId, product_id, dtStart, det_rowid, qualified_rowid, order_id, pu, dispatched_qty, remain_qty, LOT, comment);
