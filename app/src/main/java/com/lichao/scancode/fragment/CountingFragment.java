@@ -36,7 +36,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  * Created by zblichao on 2016-03-10.
@@ -208,7 +210,7 @@ public class CountingFragment extends Fragment implements BarcodeReceiver {
 
             case "hospital-S":
                 this.barcodeStr = barcodeStr.split("\\*")[0];
-                editText = setTextEditTextById(R.id.expire, barcodeStr.split("\\*")[0]);
+                editText = setTextEditTextById(R.id.expire, dateFormat(barcodeStr.split("\\*")[0]));
                 editText.setEnabled(false);
                 editText = setTextEditTextById(R.id.hospital_barcode_secondary, barcodeStr);
                 editText.setEnabled(false);
@@ -367,9 +369,6 @@ public class CountingFragment extends Fragment implements BarcodeReceiver {
                 String expire = ((EditText) root.findViewById(R.id.expire)).getText().toString();
                 String qty = ((EditText) root.findViewById(R.id.dispatched_qty)).getText().toString();
                 res = dao.instock(barcode, LOT, expire, warehousesId, qty, movement);
-
-                System.out.println(res);
-
                 Message msg = handler.obtainMessage();
                 msg.arg1 = 2;
                 msg.sendToTarget();
@@ -399,5 +398,20 @@ public class CountingFragment extends Fragment implements BarcodeReceiver {
         editText.setText(text);
         editText.setEnabled(true);
         return editText;
+    }
+
+    public String dateFormat(String date) {
+        try {
+            SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM");
+            SimpleDateFormat format2 = new SimpleDateFormat("yyyy-MM-dd");
+            Calendar cal = format1.getCalendar();
+            cal.setTime(format1.parse(date));
+            cal.set(Calendar.DAY_OF_MONTH, 1);// 设置为1号,当前日期既为本月第一天
+            cal.add(Calendar.MONTH, 1);// 月增加1天
+            cal.add(Calendar.DAY_OF_MONTH, -1);// 日期倒数一日,既得到本月最后一天
+            return format2.format(cal.getTime());
+        } catch (Exception e) {
+            return date;
+        }
     }
 }

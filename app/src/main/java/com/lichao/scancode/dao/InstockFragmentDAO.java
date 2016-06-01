@@ -36,7 +36,7 @@ public class InstockFragmentDAO extends CommonDAO {
         nameValuePairs.add(new NameValuePair("pu_0_0", pu));
         nameValuePairs.add(new NameValuePair("lot_number_0_0",LOT));
 
-         Calendar c = Calendar.getInstance();
+        Calendar c = Calendar.getInstance();
         try {
             c.setTime(format.parse(dtStart));
             nameValuePairs.add(new NameValuePair("dlc_0_0", dtStart.replace('-', '/')));

@@ -265,9 +265,6 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
                 break;
             case "hospital-P":
                 this.barcodeStr = barcodeStr.split("\\*")[0];
-
-                System.out.println(barcodeStr);
-
                 editText = setTextEditTextById(R.id.hospital_barcode_primary, barcodeStr.split("\\*")[0]);
                 editText.setEnabled(false);
                 LOT = barcodeStr.split("\\*")[1];
@@ -336,7 +333,7 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
                     if (progressDialog != null && progressDialog.isShowing())
                         progressDialog.dismiss();
 
-                    ToastUtil.showShortToast(getContext(), res);
+//                    ToastUtil.showShortToast(getContext(), res);
                     try {
                         JSONObject jsonObject = new JSONObject(res);
                         if (jsonObject.getBoolean("dispatch")) {

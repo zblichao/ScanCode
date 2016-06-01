@@ -35,7 +35,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  * Created by zblichao on 2016-03-10.
@@ -72,18 +74,19 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
         orders.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (jsonOrders != null && jsonOrders.length() < position) {
+                if (jsonOrders != null && jsonOrders.length() > position) {
                     try {
                         currentOrder = jsonOrders.getJSONObject(position);
                         setTextEditTextById(R.id.order_qty, "ordered_qty", currentOrder.getJSONObject("ordered"));
                         setTextEditTextById(R.id.supplier_name, "supplier_name", currentOrder);
-                        JSONArray dispatched = currentOrder.getJSONArray("dispatched");
+                        JSONArray qualified = currentOrder.getJSONArray("qualified");
                         int qualified_qty = 0;
-                        for (int i = 0; i < dispatched.length(); i++) {
-                            qualified_qty += dispatched.getJSONObject(i).getInt("qty");
+                        for (int i = 0; i < qualified.length(); i++) {
+                            qualified_qty += qualified.getJSONObject(i).getInt("qty");
                         }
-                        setTextEditTextById(R.id.qualified_qty, (currentOrder.getJSONObject("ordered").getInt("ordered_qty") - qualified_qty) + "");
-
+                        EditText editText = setTextEditTextById(R.id.qualified_qty, (currentOrder.getJSONObject("ordered").getInt("ordered_qty") - qualified_qty) + "");
+                        CharSequence text = editText.getText();
+                        editText.setSelection(text.length());
                     } catch (Exception e) {
                     }
                 }
@@ -306,9 +309,9 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
 
             case "hospital-S":
                 this.barcodeStr = barcodeStr.split("\\*")[0];
-                editText = setTextEditTextById(R.id.hospital_barcode_secondary, barcodeStr);
+                editText = setTextEditTextById(R.id.expire, dateFormat(barcodeStr.split("\\*")[0]));
                 editText.setEnabled(false);
-                editText = setTextEditTextById(R.id.expire, barcodeStr.split("\\*")[0]);
+                editText = setTextEditTextById(R.id.hospital_barcode_secondary, barcodeStr);
                 editText.setEnabled(false);
                 break;
         }
@@ -365,8 +368,6 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
                                 CharSequence text = editText.getText();
                                 editText.setSelection(text.length());
                             }
-
-
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -473,6 +474,7 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
                         qualifiedInt += qualified.getJSONObject(i).getInt("qty");
                     }
                     String remain_qty = (ordered_qty - qualifiedInt) + "";
+                    System.out.println(dtStart);
                     res = dao.qualify(product_id, dtStart, det_rowid, order_id, pu, qualified_qty, remain_qty, LOT);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -506,5 +508,20 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
         editText.setText(text);
         editText.setEnabled(true);
         return editText;
+    }
+
+    public String dateFormat(String date) {
+        try {
+            SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM");
+            SimpleDateFormat format2 = new SimpleDateFormat("yyyy-MM-dd");
+            Calendar cal = format1.getCalendar();
+            cal.setTime(format1.parse(date));
+            cal.set(Calendar.DAY_OF_MONTH, 1);// 设置为1号,当前日期既为本月第一天
+            cal.add(Calendar.MONTH, 1);// 月增加1天
+            cal.add(Calendar.DAY_OF_MONTH, -1);// 日期倒数一日,既得到本月最后一天
+            return format2.format(cal.getTime());
+        } catch (Exception e) {
+            return date;
+        }
     }
 }

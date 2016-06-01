@@ -36,7 +36,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  * Created by zblichao on 2016-03-10.
@@ -78,20 +80,47 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
                         currentOrder = jsonOrders.getJSONObject(position);
                         setTextEditTextById(R.id.order_qty, "ordered_qty", currentOrder.getJSONObject("ordered"));
                         setTextEditTextById(R.id.supplier_name, "supplier_name", currentOrder);
+//                        JSONArray qualified = currentOrder.getJSONArray("qualified");
+//                        if (qualified.length() > 0) {
+//                            JSONObject qualifyDetial = qualified.getJSONObject(0);
+//                            setTextEditTextById(R.id.LOT, "LOT", qualifyDetial);
+//                            setTextEditTextById(R.id.expire, "expire", qualifyDetial);
+//                        }
+//
+//                        JSONArray dispatched = currentOrder.getJSONArray("dispatched");
+//                        int qualified_qty = 0;
+//                        for (int i = 0; i < dispatched.length(); i++) {
+//                            qualified_qty += dispatched.getJSONObject(i).getInt("qty");
+//                        }
+//                        EditText tt = setTextEditTextById(R.id.qualified_qty, (currentOrder.getJSONObject("ordered").getInt("ordered_qty") - qualified_qty) + "");
+//                        tt.setEnabled(false);
+
                         JSONArray qualified = currentOrder.getJSONArray("qualified");
-                        if (qualified.length() > 0) {
-                            JSONObject qualifyDetial = qualified.getJSONObject(0);
-                            setTextEditTextById(R.id.LOT, "LOT", qualifyDetial);
-                            setTextEditTextById(R.id.expire, "expire", qualifyDetial);
+                        JSONArray dispatched = currentOrder.getJSONArray("dispatched");
+
+                        int qualified_qty = 0;
+                        int dispatched_qty = 0;
+
+                        String LOT = ((EditText) root.findViewById(R.id.LOT)).getText().toString();
+                        for (int i = 0; i < qualified.length(); i++) {
+                            if (qualified.getJSONObject(i).getString("LOT").equals(LOT)) {
+                                setTextEditTextById(R.id.expire, "expire", qualified.getJSONObject(i));
+                                qualified_qty = qualified.getJSONObject(i).getInt("qty");
+                                EditText tt = setTextEditTextById(R.id.qualified_qty, qualified_qty + "");
+                                tt.setEnabled(false);
+                            }
                         }
 
-                        JSONArray dispatched = currentOrder.getJSONArray("dispatched");
-                        int qualified_qty = 0;
                         for (int i = 0; i < dispatched.length(); i++) {
-                            qualified_qty += dispatched.getJSONObject(i).getInt("qty");
+                            if (dispatched.getJSONObject(i).getString("LOT").equals(LOT)) {
+                                dispatched_qty = dispatched.getJSONObject(i).getInt("qty");
+                            }
                         }
-                        EditText tt = setTextEditTextById(R.id.qualified_qty, (currentOrder.getJSONObject("ordered").getInt("ordered_qty") - qualified_qty) + "");
-                        tt.setEnabled(false);
+
+                        EditText editText = setTextEditTextById(R.id.dispatched_qty, (qualified_qty - dispatched_qty) + "");
+                        CharSequence text = editText.getText();
+                        editText.setSelection(text.length());
+
                     } catch (Exception e) {
                     }
                 }
@@ -332,7 +361,7 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
 
             case "hospital-S":
                 this.barcodeStr = barcodeStr.split("\\*")[0];
-                editText = setTextEditTextById(R.id.expire, barcodeStr.split("\\*")[0]);
+                editText = setTextEditTextById(R.id.expire, dateFormat(barcodeStr.split("\\*")[0]));
                 editText.setEnabled(false);
                 editText = setTextEditTextById(R.id.hospital_barcode_secondary, barcodeStr);
                 editText.setEnabled(false);
@@ -376,31 +405,31 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
                                 setTextEditTextById(R.id.supplier_name, "supplier_name", currentOrder);
 
                                 JSONArray qualified = currentOrder.getJSONArray("qualified");
-                                if (qualified.length() > 0) {
-                                    JSONObject qualifyDetial = qualified.getJSONObject(0);
-                                    setTextEditTextById(R.id.LOT, "LOT", qualifyDetial);
-                                    setTextEditTextById(R.id.expire, "expire", qualifyDetial);
-                                }
+                                JSONArray dispatched = currentOrder.getJSONArray("dispatched");
 
                                 int qualified_qty = 0;
-                                for (int i = 0; i < qualified.length(); i++) {
-                                    qualified_qty += qualified.getJSONObject(i).getInt("qty");
-                                }
-                                EditText tt = setTextEditTextById(R.id.qualified_qty, qualified_qty + "");
-                                tt.setEnabled(false);
-                                JSONArray dispatched = currentOrder.getJSONArray("dispatched");
                                 int dispatched_qty = 0;
+
+                                String LOT = ((EditText) root.findViewById(R.id.LOT)).getText().toString();
+                                for (int i = 0; i < qualified.length(); i++) {
+                                    if (qualified.getJSONObject(i).getString("LOT").equals(LOT)) {
+                                        setTextEditTextById(R.id.expire, "expire", qualified.getJSONObject(i));
+                                        qualified_qty = qualified.getJSONObject(i).getInt("qty");
+                                        EditText tt = setTextEditTextById(R.id.qualified_qty, qualified_qty + "");
+                                        tt.setEnabled(false);
+                                    }
+                                }
+
                                 for (int i = 0; i < dispatched.length(); i++) {
-                                    dispatched_qty += dispatched.getJSONObject(i).getInt("qty");
+                                    if (dispatched.getJSONObject(i).getString("LOT").equals(LOT)) {
+                                        dispatched_qty = dispatched.getJSONObject(i).getInt("qty");
+                                    }
                                 }
 
                                 EditText editText = setTextEditTextById(R.id.dispatched_qty, (qualified_qty - dispatched_qty) + "");
                                 CharSequence text = editText.getText();
                                 editText.setSelection(text.length());
-
                             }
-
-
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -549,6 +578,7 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
                         JSONObject qualifyDetial = qualified.getJSONObject(0);
                         qualified_rowid = qualifyDetial.getString("qualified_rowid");
                     }
+
                     res = dao.instock(warehousesId, product_id, dtStart, det_rowid, qualified_rowid, order_id, pu, dispatched_qty, remain_qty, LOT, comment);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -582,5 +612,20 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
         editText.setText(text);
         editText.setEnabled(true);
         return editText;
+    }
+
+    public String dateFormat(String date) {
+        try {
+            SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM");
+            SimpleDateFormat format2 = new SimpleDateFormat("yyyy-MM-dd");
+            Calendar cal = format1.getCalendar();
+            cal.setTime(format1.parse(date));
+            cal.set(Calendar.DAY_OF_MONTH, 1);// 设置为1号,当前日期既为本月第一天
+            cal.add(Calendar.MONTH, 1);// 月增加1天
+            cal.add(Calendar.DAY_OF_MONTH, -1);// 日期倒数一日,既得到本月最后一天
+            return format2.format(cal.getTime());
+        } catch (Exception e) {
+            return date;
+        }
     }
 }
