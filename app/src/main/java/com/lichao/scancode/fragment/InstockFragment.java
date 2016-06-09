@@ -617,6 +617,7 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
     }
 
     public String dateFormat(String date) {
+        if (date.split("-").length == 3) return date;
         try {
             SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM");
             SimpleDateFormat format2 = new SimpleDateFormat("yyyy-MM-dd");

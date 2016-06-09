@@ -401,9 +401,14 @@ public class CountingFragment extends Fragment implements BarcodeReceiver {
     }
 
     public String dateFormat(String date) {
+        if (date.split("-").length == 3) return date;
         try {
             SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM");
             SimpleDateFormat format2 = new SimpleDateFormat("yyyy-MM-dd");
+
+            System.out.println(date.split("-"));
+            System.out.println(date.split("-").length);
+
             Calendar cal = format1.getCalendar();
             cal.setTime(format1.parse(date));
             cal.set(Calendar.DAY_OF_MONTH, 1);// 设置为1号,当前日期既为本月第一天

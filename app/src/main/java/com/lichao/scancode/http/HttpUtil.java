@@ -19,7 +19,7 @@ import java.util.List;
 public class HttpUtil {
 
 //    public static String uriAPI = "http://172.30.85.69:8080/";
-    public static String uriAPI = "http://101.200.163.4/";
+    public static String uriAPI = "http://121.42.151.44/";
 
     public static String Post(String urlString,
                               List<NameValuePair> param) throws  IOException {
@@ -52,7 +52,7 @@ public class HttpUtil {
         outStream.write(data);
         outStream.flush();
         outStream.close();
-        System.out.println(conn.getResponseCode()); //响应代码 200表示成功
+//        System.out.println(conn.getResponseCode()); //响应代码 200表示成功
         if (conn.getResponseCode() == 200) {
             InputStream inStream = conn.getInputStream();
             String result = new String(StreamTools.streamToString(inStream));
