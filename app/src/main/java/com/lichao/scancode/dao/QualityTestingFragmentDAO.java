@@ -55,9 +55,20 @@ public class QualityTestingFragmentDAO extends CommonDAO {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
         return res;
+    }
 
+    public String stopOrder(String order_id) {
+
+        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+        nameValuePairs.add(new NameValuePair("action", "stop_order"));
+        nameValuePairs.add(new NameValuePair("order_id", order_id));
+        String res = "";
+        try {
+            res = HttpUtil.Post("index.php", nameValuePairs);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return res;
     }
 }

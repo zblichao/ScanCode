@@ -54,7 +54,7 @@ public class OutOrderDetialActivity extends BaseActivity {
     private String expire;
     private String originStock;
     private View windowOut;
-    private EAN128Parser ean128Parser = new EAN128Parser(); // 你看看放哪儿合适，我一般放在onCreate
+    private EAN128Parser ean128Parser = new EAN128Parser();
     private HIBCParser hibcParser = new HIBCParser();
     private AlertDialog alertDialog;
     private Button chooseWarehouse;
@@ -108,10 +108,6 @@ public class OutOrderDetialActivity extends BaseActivity {
         dao = new OutOrderDetialDAO();
         getOrders();
         showDialog_Layout(this);
-//        barcodeStr = "SPH00002159";
-//        lot = "35R0902";
-//        expire = "2018/09/02";
-//        getProductInfo();
     }
 
 

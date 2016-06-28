@@ -51,6 +51,7 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
     private String barcodeStr;
     private Button chooseWarehouse;
     private Button confirm;
+    private Button stopOrder;
     private Button clearContent;
     private Button showOrder;
     private String warehousesId;
@@ -102,6 +103,14 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
             @Override
             public void onClick(View v) {
                 qualify();
+            }
+        });
+
+        stopOrder = (Button) root.findViewById(R.id.close);
+        stopOrder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stopOrder();
             }
         });
 
@@ -407,6 +416,39 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
                     }
 //                    ToastUtil.showShortToast(getContext(), res);
                     break;
+                case 5:
+                    if (progressDialog != null && progressDialog.isShowing())
+                        progressDialog.dismiss();
+                    try {
+                        JSONObject jsonObject = new JSONObject(res);
+                        if (jsonObject.getBoolean("close")) {
+                            ToastUtil.showShortToast(getContext(), "提交服务器成功");
+                            setTextEditTextById(R.id.product_barcode_primary, "");
+                            setTextEditTextById(R.id.product_barcode_secondary, "");
+                            setTextEditTextById(R.id.hospital_barcode_primary, "");
+                            setTextEditTextById(R.id.hospital_barcode_secondary, "");
+                            setTextEditTextById(R.id.product_name, "");
+                            setTextEditTextById(R.id.product_huohao, "");
+                            setTextEditTextById(R.id.product_fdacode, "");
+                            setTextEditTextById(R.id.product_fdaexpire, "");
+                            setTextEditTextById(R.id.product_size, "");
+                            setTextEditTextById(R.id.supplier_name, "");
+                            setTextEditTextById(R.id.LOT, "");
+                            setTextEditTextById(R.id.expire, "");
+                            ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.list_item, R.id.text);
+                            orders.setAdapter(adapter);
+                            setTextEditTextById(R.id.order_qty, "");
+                            setTextEditTextById(R.id.qualified_qty, "");
+                            currentOrder = null;
+                        } else {
+                            ToastUtil.showShortToast(getContext(), "提交服务器失败");
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+//                    ToastUtil.showShortToast(getContext(), res);
+
+                    break;
             }
         }
     };
@@ -430,7 +472,6 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
                 msg.sendToTarget();
             }
         }.start();
-
     }
 
     private void qualify() {
@@ -460,7 +501,6 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
                 super.run();
 
                 try {
-
                     String product_id = jsonProduct.getString("rowid");
                     String det_rowid = currentOrder.getJSONObject("ordered").getString("det_rowid");
                     String order_id = currentOrder.getString("order_id");
@@ -485,6 +525,37 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
             }
         }.start();
 
+    }
+
+    private void stopOrder() {
+        if (!CheckNetWorkUtils.updateConnectedFlags(MyApplication.myApplication)) {
+            ToastUtil.showShortToast(MyApplication.myApplication, "网络不可用");
+            return;
+        }
+        if (currentOrder == null) {
+            ToastUtil.showShortToast(getContext(), "请扫码，并选择订单");
+            return;
+        }
+        progressDialog = ProgressDialog.show(this.getContext(), // context
+                "", // title
+                "Loading. Please wait...", // message
+                true);
+        new Thread() {
+            @Override
+            public void run() {
+                super.run();
+
+                try {
+                    String order_id = currentOrder.getString("order_id");
+                    res = dao.stopOrder(order_id);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                Message msg = handler.obtainMessage();
+                msg.arg1 = 5;
+                msg.sendToTarget();
+            }
+        }.start();
     }
 
     private EditText setTextEditTextById(int id, String key, JSONObject jsonObject) {

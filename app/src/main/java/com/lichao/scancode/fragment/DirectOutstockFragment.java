@@ -21,6 +21,7 @@ import com.lichao.scancode.MyApplication;
 import com.lichao.scancode.R;
 import com.lichao.scancode.activity.ChooseDepartmentActivity;
 import com.lichao.scancode.activity.ChooseWarehousesActivity;
+import com.lichao.scancode.activity.DirectOutOrderDetailActivity;
 import com.lichao.scancode.dao.DirectOutstockFragmentDAO;
 import com.lichao.scancode.entity.NameValuePair;
 import com.lichao.scancode.receiver.BarcodeReceiver;
@@ -121,6 +122,17 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
                 startActivityForResult(intent, 2);
             }
         });
+
+        showOrder = (Button) root.findViewById(R.id.show_order);
+        showOrder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), DirectOutOrderDetailActivity.class);
+                intent.putExtra("warehouse_id", warehousesId);
+                startActivity(intent);
+            }
+        });
+
         dao = new DirectOutstockFragmentDAO();
         getWarehousesAndDepartment();
         warehousesId="";
@@ -314,7 +326,11 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
                                         editText.setEnabled(false);
                                         editText = setTextEditTextById(R.id.expire, jsonStock.getJSONObject(i).getString("expire").toString());
                                         editText.setEnabled(false);
-                                        editText = setTextEditTextById(R.id.store_qty, jsonStock.getJSONObject(i).getString("qty").toString());
+                                        String s = "";
+                                        int qty = Integer.parseInt(jsonStock.getJSONObject(i).getString("qty"));
+                                        int reserved = Integer.parseInt(jsonStock.getJSONObject(i).getString("reserved_qty"));
+                                        s = String.valueOf(qty - reserved) + "(" + String.valueOf(reserved) + ")";
+                                        editText = setTextEditTextById(R.id.store_qty, s);
                                         editText.setEnabled(false);
                                     }
                             }
@@ -462,9 +478,9 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
         try {
             EditText dispatchedEdit = (EditText) root.findViewById(R.id.out_qty);
             String dispatched_qty = dispatchedEdit.getText().toString();
-            int ordered_qty = currentStock.getInt("qty");
-            int qualifiedInt = 0;
             int dispatched = Integer.parseInt(dispatched_qty);
+            String temp = ((EditText) root.findViewById(R.id.store_qty)).getText().toString();
+            int ordered_qty = Integer.parseInt(temp.split("\\(")[0]);
 
             if (dispatched > ordered_qty) {
                 ToastUtil.showShortToast(getContext(), "出库数量不能大于库存数量");

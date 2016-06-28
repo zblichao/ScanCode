@@ -298,6 +298,7 @@
                     android:singleLine="true"
                     android:textSize="14sp" />
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -318,7 +319,6 @@
                     android:textSize="14sp" />
             </LinearLayout>
 
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -328,7 +328,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
 
-                    android:layout_weight="1"
+                    android:layout_weight="2"
                     android:text="库存数量"
                     android:textSize="14sp" />
 
@@ -337,12 +337,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="right"
-                    android:layout_weight="1"
+                    android:layout_weight="2"
                     android:text="出库数量"
                     android:textSize="14sp" />
 
@@ -352,8 +357,6 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:inputType="number" />
-
-
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
@@ -382,6 +385,14 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
             android:text="清空内容" />
+
+        <Button
+            android:id="@+id/show_order"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:text="今日出库单" />
 
     </LinearLayout>
 
