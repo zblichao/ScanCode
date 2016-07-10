@@ -62,6 +62,7 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
     private JSONObject jsonProduct;
     private EAN128Parser ean128Parser = new EAN128Parser(); // 你看看放哪儿合适，我一般放在onCreate
     private HIBCParser hibcParser = new HIBCParser();
+    private int qualified_qty;
 
     public void setScanBroadcastReceiver(ScanBroadcastReceiver scanBroadcastReceiver) {
         this.scanBroadcastReceiver = scanBroadcastReceiver;
@@ -81,11 +82,11 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
                         setTextEditTextById(R.id.order_qty, "ordered_qty", currentOrder.getJSONObject("ordered"));
                         setTextEditTextById(R.id.supplier_name, "supplier_name", currentOrder);
                         JSONArray qualified = currentOrder.getJSONArray("qualified");
-                        int qualified_qty = 0;
+                        int qualifying_qty = 0;
                         for (int i = 0; i < qualified.length(); i++) {
-                            qualified_qty += qualified.getJSONObject(i).getInt("qty");
+                            qualifying_qty += qualified.getJSONObject(i).getInt("qty");
                         }
-                        EditText editText = setTextEditTextById(R.id.qualified_qty, (currentOrder.getJSONObject("ordered").getInt("ordered_qty") - qualified_qty) + "");
+                        EditText editText = setTextEditTextById(R.id.qualifying_qty, (currentOrder.getJSONObject("ordered").getInt("ordered_qty") - qualifying_qty) + "");
                         CharSequence text = editText.getText();
                         editText.setSelection(text.length());
                     } catch (Exception e) {
@@ -131,7 +132,7 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
                 setTextEditTextById(R.id.product_fdaexpire, "");
                 setTextEditTextById(R.id.supplier_name, "");
                 setTextEditTextById(R.id.order_qty, "");
-                setTextEditTextById(R.id.qualified_qty, "");
+                setTextEditTextById(R.id.qualifying_qty, "");
                 orders = (Spinner) root.findViewById(R.id.orders);
                 orders.setAdapter(null);
             }
@@ -167,8 +168,8 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
         dao = new QualityTestingFragmentDAO();
         //getWarehouses();
         //searchProductByCode();
-        EditText qualified_qty = (EditText) root.findViewById(R.id.qualified_qty);
-        qualified_qty.requestFocus();
+        EditText qualifying_qty = (EditText) root.findViewById(R.id.qualifying_qty);
+        qualifying_qty.requestFocus();
         return root;
     }
 
@@ -178,8 +179,8 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
         if (!hidden) {
             InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(root.getWindowToken(), 0);
-            EditText qualified_qty = (EditText) root.findViewById(R.id.qualified_qty);
-            qualified_qty.requestFocus();
+            EditText qualifying_qty = (EditText) root.findViewById(R.id.qualifying_qty);
+            qualifying_qty.requestFocus();
             setTextEditTextById(R.id.product_barcode_primary, "");
             setTextEditTextById(R.id.product_barcode_secondary, "");
             setTextEditTextById(R.id.hospital_barcode_primary, "");
@@ -197,7 +198,7 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
             orders.setAdapter(adapter);
             chooseWarehouse.setText("选择仓库");
             setTextEditTextById(R.id.order_qty, "");
-            setTextEditTextById(R.id.qualified_qty, "");
+            setTextEditTextById(R.id.qualifying_qty, "");
             currentOrder = null;
         }
     }
@@ -324,8 +325,6 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
                 editText.setEnabled(false);
                 break;
         }
-
-
     }
 
     Handler handler = new Handler() {
@@ -369,11 +368,11 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
                                 setTextEditTextById(R.id.order_qty, "ordered_qty", currentOrder.getJSONObject("ordered"));
                                 setTextEditTextById(R.id.supplier_name, "supplier_name", currentOrder);
                                 JSONArray qualified = currentOrder.getJSONArray("qualified");
-                                int qualified_qty = 0;
+                                qualified_qty = 0;
                                 for (int i = 0; i < qualified.length(); i++) {
                                     qualified_qty += qualified.getJSONObject(i).getInt("qty");
                                 }
-                                EditText editText = setTextEditTextById(R.id.qualified_qty, (currentOrder.getJSONObject("ordered").getInt("ordered_qty") - qualified_qty) + "");
+                                EditText editText = setTextEditTextById(R.id.qualifying_qty, (currentOrder.getJSONObject("ordered").getInt("ordered_qty") - qualified_qty) + "");
                                 CharSequence text = editText.getText();
                                 editText.setSelection(text.length());
                             }
@@ -406,7 +405,7 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
                             orders.setAdapter(adapter);
                             chooseWarehouse.setText("选择仓库");
                             setTextEditTextById(R.id.order_qty, "");
-                            setTextEditTextById(R.id.qualified_qty, "");
+                            setTextEditTextById(R.id.qualifying_qty, "");
                             currentOrder = null;
                         } else {
                             ToastUtil.showShortToast(getContext(), "提交服务器失败");
@@ -438,7 +437,7 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
                             ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.list_item, R.id.text);
                             orders.setAdapter(adapter);
                             setTextEditTextById(R.id.order_qty, "");
-                            setTextEditTextById(R.id.qualified_qty, "");
+                            setTextEditTextById(R.id.qualifying_qty, "");
                             currentOrder = null;
                         } else {
                             ToastUtil.showShortToast(getContext(), "提交服务器失败");
@@ -485,12 +484,28 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
             ToastUtil.showShortToast(getContext(), "请填写LOT");
             return;
         }
+
         EditText expire = (EditText) root.findViewById(R.id.expire);
         final String dtStart = expire.getText().toString();
         if (dtStart == null || dtStart.equals("")) {
             ToastUtil.showShortToast(getContext(), "请填写LOT过期日期");
             return;
         }
+
+        int orderQty = Integer.parseInt(((EditText) root.findViewById(R.id.order_qty)).getText().toString());
+        int qualifyingQty = Integer.parseInt(((EditText) root.findViewById(R.id.qualifying_qty)).getText().toString());
+
+//        if (qualifyingQty > orderQty) {
+//            ToastUtil.showShortToast(getContext(), "质检数量不得大于订单数量");
+//            return;
+//        }
+//
+        if ((qualified_qty + qualifyingQty) > orderQty) {
+            ToastUtil.showShortToast(getContext(), "质检总数不得大于订单数量");
+//            ToastUtil.showShortToast(getContext(), qualified_qty + " + " + qualifyingQty + " > " + orderQty);
+            return;
+        }
+
         progressDialog = ProgressDialog.show(this.getContext(), // context
                 "", // title
                 "Loading. Please wait...", // message
@@ -505,8 +520,8 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
                     String det_rowid = currentOrder.getJSONObject("ordered").getString("det_rowid");
                     String order_id = currentOrder.getString("order_id");
                     String pu = currentOrder.getString("pu");
-                    EditText qualifiedEdit = (EditText) root.findViewById(R.id.qualified_qty);
-                    String qualified_qty = qualifiedEdit.getText().toString();
+                    EditText qualifiedEdit = (EditText) root.findViewById(R.id.qualifying_qty);
+                    String qualifying_qty = qualifiedEdit.getText().toString();
                     int ordered_qty = currentOrder.getJSONObject("ordered").getInt("ordered_qty");
                     JSONArray qualified = currentOrder.getJSONArray("qualified");
                     int qualifiedInt = 0;
@@ -515,7 +530,7 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
                     }
                     String remain_qty = (ordered_qty - qualifiedInt) + "";
                     System.out.println(dtStart);
-                    res = dao.qualify(product_id, dtStart, det_rowid, order_id, pu, qualified_qty, remain_qty, LOT);
+                    res = dao.qualify(product_id, dtStart, det_rowid, order_id, pu, qualifying_qty, remain_qty, LOT);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

@@ -354,7 +354,7 @@
                     android:textSize="14sp" />
 
                 <EditText
-                    android:id="@+id/qualified_qty"
+                    android:id="@+id/qualifying_qty"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
 

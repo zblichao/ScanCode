@@ -62,6 +62,9 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
     private JSONObject jsonProduct;
     private EAN128Parser ean128Parser = new EAN128Parser(); // 你看看放哪儿合适，我一般放在onCreate
     private HIBCParser hibcParser = new HIBCParser();
+    private int remain_qty;
+    private String qualified_rowid;
+    private String det_rowid;
 
     public void setScanBroadcastReceiver(ScanBroadcastReceiver scanBroadcastReceiver) {
         this.scanBroadcastReceiver = scanBroadcastReceiver;
@@ -80,46 +83,50 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
                         currentOrder = jsonOrders.getJSONObject(position);
                         setTextEditTextById(R.id.order_qty, "ordered_qty", currentOrder.getJSONObject("ordered"));
                         setTextEditTextById(R.id.supplier_name, "supplier_name", currentOrder);
-//                        JSONArray qualified = currentOrder.getJSONArray("qualified");
-//                        if (qualified.length() > 0) {
-//                            JSONObject qualifyDetial = qualified.getJSONObject(0);
-//                            setTextEditTextById(R.id.LOT, "LOT", qualifyDetial);
-//                            setTextEditTextById(R.id.expire, "expire", qualifyDetial);
-//                        }
-//
-//                        JSONArray dispatched = currentOrder.getJSONArray("dispatched");
-//                        int qualified_qty = 0;
-//                        for (int i = 0; i < dispatched.length(); i++) {
-//                            qualified_qty += dispatched.getJSONObject(i).getInt("qty");
-//                        }
-//                        EditText tt = setTextEditTextById(R.id.qualified_qty, (currentOrder.getJSONObject("ordered").getInt("ordered_qty") - qualified_qty) + "");
-//                        tt.setEnabled(false);
 
                         JSONArray qualified = currentOrder.getJSONArray("qualified");
                         JSONArray dispatched = currentOrder.getJSONArray("dispatched");
+                        String LOT = ((EditText) root.findViewById(R.id.LOT)).getText().toString();
+                        qualified_rowid = "";
+                        remain_qty = 0;
 
                         int qualified_qty = 0;
-                        int dispatched_qty = 0;
-
-                        String LOT = ((EditText) root.findViewById(R.id.LOT)).getText().toString();
-                        for (int i = 0; i < qualified.length(); i++) {
+                        for (int i = 0; i < qualified.length(); i++)
                             if (qualified.getJSONObject(i).getString("LOT").equals(LOT)) {
-                                setTextEditTextById(R.id.expire, "expire", qualified.getJSONObject(i));
+                                qualified_rowid = qualified.getJSONObject(i).getString("qualified_rowid");
+                                det_rowid = qualified.getJSONObject(i).getString("det_rowid");
                                 qualified_qty = qualified.getJSONObject(i).getInt("qty");
-                                EditText tt = setTextEditTextById(R.id.qualified_qty, qualified_qty + "");
-                                tt.setEnabled(false);
-                            }
-                        }
+                                String rowid_temp = "";
+                                int dispatched_qty = 0;
+                                for (int j = 0; j < dispatched.length(); j++) {
+                                    rowid_temp = dispatched.getJSONObject(j).getString("qualified_rowid");
+                                    if (qualified_rowid.equals(rowid_temp)) {
+                                        dispatched_qty += dispatched.getJSONObject(j).getInt("qty");
+                                    }
+                                }
+                                remain_qty = qualified_qty - dispatched_qty;
+                                if (remain_qty > 0) {
+                                    setTextEditTextById(R.id.expire, "expire", qualified.getJSONObject(i));
+                                    EditText tt = setTextEditTextById(R.id.qualified_qty, qualified_qty + "");
+                                    tt.setEnabled(false);
 
-                        for (int i = 0; i < dispatched.length(); i++) {
-                            if (dispatched.getJSONObject(i).getString("LOT").equals(LOT)) {
-                                dispatched_qty = dispatched.getJSONObject(i).getInt("qty");
+                                    EditText editText = setTextEditTextById(R.id.dispatched_qty, remain_qty + "");
+                                    CharSequence text = editText.getText();
+                                    editText.setSelection(text.length());
+                                    break;
+                                }
                             }
-                        }
+                            else {
+                                EditText editText = setTextEditTextById(R.id.qualified_qty, "0");
+                                editText.setEnabled(false);
 
-                        EditText editText = setTextEditTextById(R.id.dispatched_qty, (qualified_qty - dispatched_qty) + "");
-                        CharSequence text = editText.getText();
-                        editText.setSelection(text.length());
+                                editText = setTextEditTextById(R.id.expire, "");
+                                editText.setEnabled(false);
+
+                                editText = setTextEditTextById(R.id.dispatched_qty, "0");
+                                CharSequence text = editText.getText();
+                                editText.setSelection(text.length());
+                            }
 
                     } catch (Exception e) {
                     }
@@ -406,29 +413,47 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
 
                                 JSONArray qualified = currentOrder.getJSONArray("qualified");
                                 JSONArray dispatched = currentOrder.getJSONArray("dispatched");
+                                String LOT = ((EditText) root.findViewById(R.id.LOT)).getText().toString();
+                                qualified_rowid = "";
+                                remain_qty = 0;
 
                                 int qualified_qty = 0;
-                                int dispatched_qty = 0;
-
-                                String LOT = ((EditText) root.findViewById(R.id.LOT)).getText().toString();
-                                for (int i = 0; i < qualified.length(); i++) {
+                                for (int i = 0; i < qualified.length(); i++)
                                     if (qualified.getJSONObject(i).getString("LOT").equals(LOT)) {
-                                        setTextEditTextById(R.id.expire, "expire", qualified.getJSONObject(i));
+                                        qualified_rowid = qualified.getJSONObject(i).getString("qualified_rowid");
+                                        det_rowid = qualified.getJSONObject(i).getString("det_rowid");
                                         qualified_qty = qualified.getJSONObject(i).getInt("qty");
-                                        EditText tt = setTextEditTextById(R.id.qualified_qty, qualified_qty + "");
-                                        tt.setEnabled(false);
-                                    }
-                                }
+                                        String rowid_temp = "";
+                                        int dispatched_qty = 0;
+                                        for (int j = 0; j < dispatched.length(); j++) {
+                                            rowid_temp = dispatched.getJSONObject(j).getString("qualified_rowid");
+                                            if (qualified_rowid.equals(rowid_temp)) {
+                                                dispatched_qty += dispatched.getJSONObject(j).getInt("qty");
+                                            }
+                                        }
+                                        remain_qty = qualified_qty - dispatched_qty;
+                                        if (remain_qty > 0) {
+                                            setTextEditTextById(R.id.expire, "expire", qualified.getJSONObject(i));
+                                            EditText tt = setTextEditTextById(R.id.qualified_qty, qualified_qty + "");
+                                            tt.setEnabled(false);
 
-                                for (int i = 0; i < dispatched.length(); i++) {
-                                    if (dispatched.getJSONObject(i).getString("LOT").equals(LOT)) {
-                                        dispatched_qty = dispatched.getJSONObject(i).getInt("qty");
+                                            EditText editText = setTextEditTextById(R.id.dispatched_qty, remain_qty + "");
+                                            CharSequence text = editText.getText();
+                                            editText.setSelection(text.length());
+                                            break;
+                                        }
                                     }
-                                }
+                                else {
+                                        EditText editText = setTextEditTextById(R.id.qualified_qty, "0");
+                                        editText.setEnabled(false);
 
-                                EditText editText = setTextEditTextById(R.id.dispatched_qty, (qualified_qty - dispatched_qty) + "");
-                                CharSequence text = editText.getText();
-                                editText.setSelection(text.length());
+                                        editText = setTextEditTextById(R.id.expire, "");
+                                        editText.setEnabled(false);
+
+                                        editText = setTextEditTextById(R.id.dispatched_qty, "0");
+                                        CharSequence text = editText.getText();
+                                        editText.setSelection(text.length());
+                                    }
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -521,7 +546,7 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
         EditText expire = (EditText) root.findViewById(R.id.expire);
         final String dtStart = expire.getText().toString();
         if (dtStart == null || dtStart.equals("")) {
-            ToastUtil.showShortToast(getContext(), "请填写LOT过期日期");
+            ToastUtil.showShortToast(getContext(), "请填写有效期");
             return;
         }
         try {
@@ -558,7 +583,6 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
                     String product_id = jsonProduct.getString("rowid");
                     EditText expire = (EditText) root.findViewById(R.id.expire);
                     String dtStart = expire.getText().toString();
-                    String det_rowid = currentOrder.getJSONObject("ordered").getString("det_rowid");
                     String order_id = currentOrder.getString("order_id");
                     String pu = currentOrder.getString("pu");
                     EditText dispatchedEdit = (EditText) root.findViewById(R.id.dispatched_qty);
@@ -566,22 +590,15 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
                     EditText LOTEdit = (EditText) root.findViewById(R.id.LOT);
                     String LOT = LOTEdit.getText().toString();
                     String comment = ((EditText) root.findViewById(R.id.supplier_name)).getText().toString();
-                    int ordered_qty = currentOrder.getJSONObject("ordered").getInt("ordered_qty");
-                    JSONArray qualified = currentOrder.getJSONArray("qualified");
-                    int qualifiedInt = 0;
-                    for (int i = 0; i < qualified.length(); i++) {
-                        qualifiedInt += qualified.getJSONObject(i).getInt("qty");
-                    }
-                    String remain_qty = (ordered_qty - qualifiedInt) + "";
 
-                    String qualified_rowid = "";
-                    for (int i = 0; i < qualified.length(); i++) {
-                        if (qualified.getJSONObject(i).getString("LOT").toString().equals(LOT)){
-                            qualified_rowid = qualified.getJSONObject(i).getString("qualified_rowid").toString();
-                        }
-                    }
+//                    System.out.println(LOT);
+//                    System.out.println(dtStart);
+//                    System.out.println(order_id);
+//                    System.out.println(det_rowid);
+//                    System.out.println(qualified_rowid);
+//                    System.out.println(remain_qty);
 
-                    res = dao.instock(warehousesId, product_id, dtStart, det_rowid, qualified_rowid, order_id, pu, dispatched_qty, remain_qty, LOT, comment);
+                    res = dao.instock(warehousesId, product_id, dtStart, det_rowid, qualified_rowid, order_id, pu, dispatched_qty, String.valueOf(remain_qty), LOT, comment);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
