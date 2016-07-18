@@ -549,27 +549,18 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
             ToastUtil.showShortToast(getContext(), "请填写有效期");
             return;
         }
-        try {
-            EditText dispatchedEdit = (EditText) root.findViewById(R.id.dispatched_qty);
-            String dispatched_qty = dispatchedEdit.getText().toString();
-            int ordered_qty = currentOrder.getJSONObject("ordered").getInt("ordered_qty");
-            JSONArray qualified = currentOrder.getJSONArray("qualified");
-            int qualifiedInt = 0;
-            for (int i = 0; i < qualified.length(); i++) {
-                qualifiedInt += qualified.getJSONObject(i).getInt("qty");
-            }
 
-            int dispatched = Integer.parseInt(dispatched_qty);
-            if (dispatched > qualifiedInt) {
-                ToastUtil.showShortToast(getContext(), "入库数量不能大于质检数量");
-                return;
-            }
-            if (dispatched > ordered_qty) {
-                ToastUtil.showShortToast(getContext(), "入库数量不能大于订单数量");
-                return;
-            }
+        String dispatched = ((EditText) root.findViewById(R.id.dispatched_qty)).getText().toString();
+        String qualified = ((EditText) root.findViewById(R.id.qualified_qty)).getText().toString();
+        String ordered_qty = ((EditText) root.findViewById(R.id.order_qty)).getText().toString();
 
-        } catch (Exception e) {
+        if (Integer.parseInt(dispatched) > Integer.parseInt(qualified)) {
+            ToastUtil.showShortToast(getContext(), "入库数量不能大于质检数量");
+            return;
+        }
+        if (Integer.parseInt(dispatched) > Integer.parseInt(ordered_qty)) {
+            ToastUtil.showShortToast(getContext(), "入库数量不能大于订单数量");
+            return;
         }
         progressDialog = ProgressDialog.show(this.getContext(), // context
                 "", // title
