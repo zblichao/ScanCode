@@ -555,7 +555,7 @@ public class InstockFragment extends Fragment implements BarcodeReceiver {
         String ordered_qty = ((EditText) root.findViewById(R.id.order_qty)).getText().toString();
 
         if (Integer.parseInt(dispatched) > Integer.parseInt(qualified)) {
-            ToastUtil.showShortToast(getContext(), "入库数量不能大于质检数量");
+            ToastUtil.showLongToast(getContext(), "不能大于质检数量\r\n尝试再扫一次条码，会出来剩下的数量");
             return;
         }
         if (Integer.parseInt(dispatched) > Integer.parseInt(ordered_qty)) {

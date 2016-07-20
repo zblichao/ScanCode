@@ -24,7 +24,7 @@
             android:id="@+id/username"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="xiao"
+            android:text="zhang"
             android:textSize="16sp" />
     </LinearLayout>
 
@@ -38,7 +38,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="密    码："
-            android:textSize="16sp" />                                                                                                                                                                                                                 cdcdxxxc
+            android:textSize="16sp" />
 
         <EditText
             android:id="@+id/password"
