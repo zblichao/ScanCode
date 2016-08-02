@@ -82,11 +82,11 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
                         setTextEditTextById(R.id.order_qty, "ordered_qty", currentOrder.getJSONObject("ordered"));
                         setTextEditTextById(R.id.supplier_name, "supplier_name", currentOrder);
                         JSONArray qualified = currentOrder.getJSONArray("qualified");
-                        int qualifying_qty = 0;
+                        qualified_qty = 0;
                         for (int i = 0; i < qualified.length(); i++) {
-                            qualifying_qty += qualified.getJSONObject(i).getInt("qty");
+                            qualified_qty += qualified.getJSONObject(i).getInt("qty");
                         }
-                        EditText editText = setTextEditTextById(R.id.qualifying_qty, (currentOrder.getJSONObject("ordered").getInt("ordered_qty") - qualifying_qty) + "");
+                        EditText editText = setTextEditTextById(R.id.qualifying_qty, (currentOrder.getJSONObject("ordered").getInt("ordered_qty") - qualified_qty) + "");
                         CharSequence text = editText.getText();
                         editText.setSelection(text.length());
                     } catch (Exception e) {
