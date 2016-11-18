@@ -63,9 +63,15 @@ public abstract class ScanBroadcastReceiver extends BroadcastReceiver {
         byte[] barcode = intent.getByteArrayExtra("barocode");
         int barocodelen = intent.getIntExtra("length", 0);
         byte temp = intent.getByteExtra("barcodeType", (byte) 0);
-        android.util.Log.i("debug", "----codetype--" + temp);
+        //android.util.Log.i("debug", "----codetype--" + temp);
         String barcodeStr = new String(barcode, 0, barocodelen);
+
+        barcodeStr = "01045473270851201719013010SPO0986711";
+
         String type = barcodeParser.getBarcodeType(barcodeStr);
+
+        android.util.Log.i("debug", type);
+
         onReceiveBarcode(type, barcodeStr);
         mScanManager.stopDecode();
     }

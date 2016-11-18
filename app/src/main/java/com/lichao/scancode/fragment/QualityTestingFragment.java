@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -220,7 +221,6 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
     @Override
     public void onReceiveBarcode(String type, String barcodeStr) {
 //        ToastUtil.showShortToast(MyApplication.myApplication, type + ":" + barcodeStr);
-
         ArrayList<NameValuePair> list;
         EditText editText;
         switch (type) {
@@ -262,17 +262,23 @@ public class QualityTestingFragment extends Fragment implements BarcodeReceiver 
                     return;
                 searchProductByCode();
 
-                list = hibcParser.HIBCSecondaryParser(barcodeStr.substring(16));
-                for (int i = 0; i < list.size(); i++) {
-                    if (list.get(i).getName().equals("LOT")) {
-                        editText = setTextEditTextById(R.id.LOT, list.get(i).getValue());
-                        editText.setEnabled(false);
+//                list = hibcParser.HIBCSecondaryParser(barcodeStr.substring(16));
+                try {
+                    list = ean128Parser.parseBarcodeToList(barcodeStr.substring(16));
+                    for (int i = 0; i < list.size(); i++) {
+                        if (list.get(i).getName().equals("LOT")) {
+                            editText = setTextEditTextById(R.id.LOT, list.get(i).getValue());
+                            editText.setEnabled(false);
+                        }
+                        if (list.get(i).getName().equals("expire")) {
+                            editText = setTextEditTextById(R.id.expire, list.get(i).getValue());
+                            editText.setEnabled(false);
+                        }
                     }
-                    if (list.get(i).getName().equals("expire")) {
-                        editText = setTextEditTextById(R.id.expire, list.get(i).getValue());
-                        editText.setEnabled(false);
-                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+
                 break;
             case "HIBC-P":
                 this.barcodeStr = barcodeStr;

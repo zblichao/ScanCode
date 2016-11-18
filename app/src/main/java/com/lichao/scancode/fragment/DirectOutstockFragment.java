@@ -231,17 +231,23 @@ public class DirectOutstockFragment extends Fragment implements BarcodeReceiver 
                     return;
                 searchProductByCode();
 
-                list = hibcParser.HIBCSecondaryParser(barcodeStr.substring(16));
-                for (int i = 0; i < list.size(); i++) {
-                    if (list.get(i).getName().equals("LOT")) {
-                        editText = setTextEditTextById(R.id.LOT, list.get(i).getValue());
-                        editText.setEnabled(false);
+//                list = hibcParser.HIBCSecondaryParser(barcodeStr.substring(16));
+                try {
+                    list = ean128Parser.parseBarcodeToList(barcodeStr.substring(16));
+                    for (int i = 0; i < list.size(); i++) {
+                        if (list.get(i).getName().equals("LOT")) {
+                            editText = setTextEditTextById(R.id.LOT, list.get(i).getValue());
+                            editText.setEnabled(false);
+                        }
+                        if (list.get(i).getName().equals("expire")) {
+                            editText = setTextEditTextById(R.id.expire, list.get(i).getValue());
+                            editText.setEnabled(false);
+                        }
                     }
-                    if (list.get(i).getName().equals("expire")) {
-                        editText = setTextEditTextById(R.id.expire, list.get(i).getValue());
-                        editText.setEnabled(false);
-                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+
                 break;
             case "HIBC-P":
                 this.barcodeStr = barcodeStr;

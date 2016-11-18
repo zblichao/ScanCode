@@ -148,17 +148,55 @@ public class CorrespondenceFragment extends Fragment implements BarcodeReceiver 
                 editText.setEnabled(false);
                 if (progressDialog != null && progressDialog.isShowing())
                     return;
-//                searchProductByCode();
+                searchProductByCode();
                 break;
             case "code128-S":
+                this.barcodeStr = barcodeStr;
+                editText = setTextEditTextById(R.id.product_barcode_secondary, barcodeStr);
+                editText.setEnabled(false);
+                try {
+                    list = ean128Parser.parseBarcodeToList(barcodeStr);
+                    for (int i = 0; i < list.size(); i++) {
+                        if (list.get(i).getName().equals("LOT")) {
+                            editText = setTextEditTextById(R.id.LOT, list.get(i).getValue());
+                            editText.setEnabled(false);
+                        }
+                        if (list.get(i).getName().equals("expire")) {
+                            editText = setTextEditTextById(R.id.expire, list.get(i).getValue());
+                            editText.setEnabled(false);
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 break;
             case "code128":
                 this.barcodeStr = barcodeStr.substring(0, 16);
                 editText = setTextEditTextById(R.id.product_barcode_primary, barcodeStr.substring(0, 16));
                 editText.setEnabled(false);
+                editText = setTextEditTextById(R.id.product_barcode_secondary, barcodeStr.substring(16));
+                editText.setEnabled(false);
                 if (progressDialog != null && progressDialog.isShowing())
                     return;
-//                searchProductByCode();
+                searchProductByCode();
+
+//                list = hibcParser.HIBCSecondaryParser(barcodeStr.substring(16));
+                try {
+                    list = ean128Parser.parseBarcodeToList(barcodeStr.substring(16));
+                    for (int i = 0; i < list.size(); i++) {
+                        if (list.get(i).getName().equals("LOT")) {
+                            editText = setTextEditTextById(R.id.LOT, list.get(i).getValue());
+                            editText.setEnabled(false);
+                        }
+                        if (list.get(i).getName().equals("expire")) {
+                            editText = setTextEditTextById(R.id.expire, list.get(i).getValue());
+                            editText.setEnabled(false);
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
                 break;
             case "HIBC-P":
                 this.barcodeStr = barcodeStr;
